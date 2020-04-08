@@ -41,5 +41,6 @@ return [
         '__JSON__'       => '/assets/json',
 		'__IMG__'      => '/assets/img',
 		'__UPLOADS__'      => '/assets/uploads',
+        '__UPLOADS1__'      => '',
 	],
 ];

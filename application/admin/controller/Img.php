@@ -3,14 +3,15 @@
 namespace app\admin\controller;
 use app\admin\request\BannerRequest;
 use app\model\BannerModel;
+use app\model\ImgModel;
 
-class Banner extends Base
+class Img extends Base
 {
-    public function index(BannerModel $bannerModel)
+    public function index(ImgModel $imgModel)
     {
         $params = $this->request->param();
         $this->checkParams($params);
-        $this->banners = $bannerModel->getAllList($params, $this->limit);
+        $this->imgs = $imgModel->getAllList($params, $this->limit);
         return $this->fetch();
     }
 

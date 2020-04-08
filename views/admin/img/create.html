@@ -1,0 +1,123 @@
+{extend name="public:form" /}
+{block name="menu"}轮播图添加{/block}
+
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<link href="__PLUGINS__/js/zoomify/zoomify.min.css" rel="stylesheet">
+<style>
+    .none{
+        display: none;
+    }
+    #imgs_block>div{
+        position: relative;
+        display: inline-block;
+        margin: 5px;
+    }
+    #imgs_block>div>img{
+        height: 100px;
+    }
+    #imgs_block>div>.layui-icon-close{
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        right: 0;
+        color: #fff;
+        font-weight: 800;
+    }
+    .layui-disabled{
+        color: #676767!important;
+    }
+</style>
+
+{/block}
+{block name='action'}{:url('create')}{/block}
+{block name="form"}
+<div class="row layui-form">
+    <div class="col-sm-8">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">标题</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="title" required>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">轮播图</label>
+            <div class="col-sm-10">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn" id="imgs_btn">选择图片</button>
+                    <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+                        <!--预览图：-->
+                        <div class="layui-upload-list" id="imgs_block">
+                        </div>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-8">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">地址</label>
+            <div class="col-sm-10">
+                <div class="layui-input-inline">
+                    <select  id="province" lay-filter="province" name="province">
+                        <option value="">全部</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <select  id="city" lay-filter="city" name="city"></select>
+                </div>
+                <div class="layui-input-inline">
+                    <select  id="district" lay-filter="district" name="district"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/district" /}
+<script type="text/javascript" src="__PLUGINS__/js/zoomify/zoomify.min.js"></script>
+<script>
+    layui.use(['form','layer','upload'],function () {
+        var layer = layui.layer;
+        var upload = layui.upload;
+        var form = layui.form;
+        var loadding_index = '';
+        upload.render({
+            elem: '#imgs_btn'
+            ,url: '{:url("Banner/upload")}'
+            ,before: function(obj){
+                if($('#imgs_block>div').length >= 3){
+                    layer.msg('轮播图最多上传3张');
+                    return false;
+                }
+                loadding_index = layer.load();
+            }
+            ,done: function(res){
+                //上传完毕
+                layer.close(loadding_index);
+                if(res.errorCode== 0){
+                    let innerhtml = '<div>' +
+                        '<img src="__UPLOADS__/' + res.data.url + '" class="layui-upload-img">' +
+                        '<i class="layui-icon layui-icon-close"></i>' +
+                        '<input type="text" name="imgs[]" class="none" value="' + res.data.url + '">' +
+                        '</div>';
+                    $('#imgs_block').append(innerhtml)
+                }else{
+                    layer.msg(res.msg);
+                }
+                imgs_render();
+            }
+        });
+        imgs_render();
+        //重新渲染轮播图多图上传
+        function imgs_render(){
+            $('#imgs_block .layui-upload-img').zoomify();
+            $('#imgs_block>div>.layui-icon-close').click(function () {
+                $(this).parent().remove()
+            });
+        }
+    });
+</script>
+{/block}

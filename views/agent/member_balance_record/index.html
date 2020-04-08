@@ -1,0 +1,50 @@
+{extend name="public:base" /}
+{block name="menu"}余额记录{/block}
+{block name="table-head"}
+<tr>
+    <th></th>
+    <th>金额</th>
+    <th>剩余金额</th>
+    <th>交易类型</th>
+    <th>交易方式</th>
+    <th>关联卡券</th>
+    <th>关联门店</th>
+    <th>时间</th>
+</tr>
+{/block}
+{block name="table-body"}
+{if condition="!$records->count()"}
+<tr>
+    <td colspan="4" class="text-center">没有数据</td>
+</tr>
+{else/}
+{foreach $records as $key => $record}
+<tr>
+    <td>{$start + $key}</td>
+    <td>
+        {$record['type'] == 1 ? '+' : '-'}
+        {$record->amount}
+    </td>
+    <td>
+        {$record->residual_amount}
+    </td>
+    <td>
+        {$record['state']}
+    </td>
+    <td>
+        {$record->pay_type}
+    </td>
+    <td>
+        {$record->couponInfo->name ?? ''}
+    </td>
+    <td>
+        {$record->storeInfo->name ?? ''}
+    </td>
+    <td>{$record->create_time}</td>
+</tr>
+{/foreach}
+{/if}
+{/block}
+{block name="paginate"}
+{$records->render()|raw}
+{/block}

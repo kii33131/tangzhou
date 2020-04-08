@@ -1,0 +1,145 @@
+{extend name="public:base" /}
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<style>
+    .store_logo{
+        width:50px;
+        height:50px;
+    }
+    .form-search .layui-form-label{
+        width: auto;
+    }
+    .form-search button{
+        height: 38px;
+        margin-bottom: 5px;
+    }
+    .layui-form-item .layui-input-inline{
+        width: 150px;
+    }
+</style>
+{/block}
+{block name="search"}
+<div class="form-group layui-form form-search">
+    <div class="layui-inline">
+        <label class="layui-form-label">门店名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name"  autocomplete="off" class="layui-input" value="{$Request.param.name}">
+        </div>
+    </div>
+    <div class="layui-inline">
+        <label class="layui-form-label">入驻时间</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" name="entry_time" id="entry_time" value="{$Request.param.entry_time}">
+        </div>
+    </div>
+    <div class="layui-inline">
+        <div class="layui-input-inline">
+            {:searchButton()}
+        </div>
+    </div>
+</div>
+{/block}
+{block name="menu"}门店列表{/block}
+{block name="table-head"}
+    <tr>
+        <th>门店名称</th>
+        <th>分类</th>
+        <th>LOGO</th>
+        <th>地址</th>
+        <th>联系人</th>
+        <th>手机号</th>
+        <th>余额</th>
+        <th>积分</th>
+        <th>卡券发布数量</th>
+        <th>卡券领取数量</th>
+        <th>卡券下载数量</th>
+        <th>卡券核销总量</th>
+        <th>入驻时间</th>
+        <th>入驻金额</th>
+        <th>推荐人</th>
+        <th>操作</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    {if condition="!$stores->count()"}
+        <tr>
+            <td colspan="10" class="text-center">没有数据</td>
+        </tr>
+    {else/}
+        {foreach $stores as $key => $store}
+            <tr>
+                <td>{$store->name}</td>
+                <td>{$store->industryCategory->name ?? ''}</td>
+                <td>
+                    <img class="store_logo" src="__UPLOADS__/{$store->logo}"/>
+                </td>
+                <td>{$store->address}</td>
+                <td>{$store->contacts}</td>
+                <td>{$store->phone}</td>
+                <td>
+                    <a href="{:url('MemberBalanceRecord/index',['id'=>$store->id])}">
+                        {$store->balance}
+                    </a>
+                </td>
+                <td>
+                    <a href="{:url('MemberIntegralRecord/index',['id'=>$store->id])}">
+                        {$store->integral}
+                    </a>
+                </td>
+                <td>{$store->couponTotal}</td>
+                <td>{$store->couponReceiveNum}</td>
+                <td>{$store->couponDownNum}</td>
+                <td>{$store->couponWriteOffNum}</td>
+                <td>{$store->entry_time}</td>
+                <td>{$store->entry_fee}元</td>
+                <td>{$store->recommender->name ?? ''}</td>
+                <td>
+                    <button class="btn btn-success btn-xs recharge_integral" data-id="{$store->id}" type="button">充值积分</button>
+                    {:editButton(url('StoreManage/edit', ['id' => $store->id ]))}
+                    {:deleteButton(url('StoreManage/delete'), $store->id)}
+                    {:diyButton(url('CouponManage/StoreCoupons', ['store_id' => $store->id ]),'卡券')}
+                </td>
+            </tr>
+        {/foreach}
+    {/if}
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script>
+    layui.use(['form','layer','laydate'],function () {
+        var layer = layui.layer,
+            form = layui.form,
+            laydate = layui.laydate;
+        //日期范围
+        laydate.render({
+            elem: '#entry_time'
+            ,range: true
+        });
+        $('.recharge_integral').click(function(){
+            var id = $(this).data('id');
+            layer.prompt({
+                formType: 0,
+                value: '',
+                title: '请输入需充值的积分',
+            }, function(value, index, elem){
+                if(!(/(^[1-9]\d*$)/.test(value))){
+                    layer.msg('请输入正确的数值！');
+                    return false;
+                }
+                layer.close(index);
+                $.post('{:url("StoreManage/rechargeIntegral")}', {id:id,integral:value}, function (response) {
+                    if (!response.code) {
+                        warning(response.msg);
+                    } else {
+                        success(response.msg);
+                        setTimeout(function(){
+                            window.location.href = response.url
+                        }, response.wait * 1000);
+                    }
+                })
+            });
+        });
+    });
+</script>
+{/block}
+{block name="paginate"}
+    {$stores->render()|raw}
+{/block}

@@ -1,0 +1,130 @@
+{extend name="public:base" /}
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<style>
+    .store_logo{
+        width:50px;
+        height:50px;
+    }
+    .form-search .layui-form-label{
+        width: auto;
+    }
+    .form-search button{
+        height: 38px;
+        margin-bottom: 5px;
+    }
+    .layui-form-item .layui-input-inline{
+        width: 150px;
+    }
+</style>
+{/block}
+{block name="search"}
+<div class="form-group layui-form form-search">
+    <div class="layui-inline">
+        <label class="layui-form-label">用户名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name"  autocomplete="off" class="layui-input" value="{$Request.param.name}">
+        </div>
+    </div>
+    <div class="layui-inline">
+        <div class="layui-input-inline">
+            {:searchButton()}
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="menu"}提现列表{/block}
+{block name="table-head"}
+    <tr>
+        <th>提现金额</th>
+        <th>手续费</th>
+        <th>实际到账</th>
+        <th>提现方式</th>
+        <th>真实姓名</th>
+        <th>所属银行</th>
+        <th>银行卡号</th>
+        <th>申请时间</th>
+        <th>申请人</th>
+        <th>审核状态</th>
+        <th>操作</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    {if condition="!$lists->count()"}
+        <tr>
+            <td colspan="7" class="text-center">没有数据</td>
+        </tr>
+    {else/}
+        {foreach $lists as $key => $item}
+            <tr>
+                <td>{$item->amount}</td>
+                <td>{$item->service_charge}</td>
+                <td>{$item->actual_payment}</td>
+                <td>
+                    {present name="$modes[$item['mode']]"}{$modes[$item['mode']]}{/present}
+                </td>
+                <td>{$item->real_name}</td>
+                <td>{$item->bank}</td>
+                <td>{$item->bank_card_number}</td>
+                <td>{$item->create_time}</td>
+                <td>{$item->name}</td>
+                <td>
+                    {present name="$types[$item['type']]"}{$types[$item['type']]}{/present}
+                </td>
+                <td>
+                    {if $item.type == 1}
+                        {:passButton(url('AgentCashWithdrawalExamine/pass' ), $item->id)}
+                        {:refuseButton(url('AgentCashWithdrawalExamine/refuse' ), $item->id)}
+                    {/if}
+                </td>
+            </tr>
+        {/foreach}
+    {/if}
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script>
+    layui.use(['form'],function () {
+        $('.pass').click(function () {
+            id = $(this).attr('data');
+            url = $(this).attr('data-url');
+            var index = layer.confirm('确认通过？', {
+                btn: ['确认','取消'] //按钮
+            }, function(){
+                layer.close(index);
+                $.post(url, {id:id}, function (response) {
+                    if (!response.code) {
+                        warning(response.msg);
+                    } else {
+                        success(response.msg);
+                        setTimeout(function(){
+                            window.location.href = response.url
+                        }, response.wait * 1000);
+                    }
+                })
+            });
+        })
+        $('.refuse').click(function () {
+            id = $(this).attr('data');
+            url = $(this).attr('data-url');
+            var index = layer.confirm('确认拒绝？', {
+                btn: ['确认','取消'] //按钮
+            }, function(){
+                layer.close(index);
+                $.post(url, {id:id}, function (response) {
+                    if (!response.code) {
+                        warning(response.msg);
+                    } else {
+                        success(response.msg);
+                        setTimeout(function(){
+                            window.location.href = response.url
+                        }, response.wait * 1000);
+                    }
+                })
+            });
+        })
+    });
+</script>
+{/block}
+{block name="paginate"}
+    {$lists->render()|raw}
+{/block}

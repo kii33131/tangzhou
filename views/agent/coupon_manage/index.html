@@ -1,0 +1,275 @@
+{extend name="public:base" /}
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<style>
+     .coupon_logo{
+        width:50px;
+        height:50px;
+    }
+    .form-search .layui-form-label{
+        width: auto;
+    }
+
+    .form-search button{
+        height: 38px;
+        margin-bottom: 5px;
+    }
+    .layui-form-item .layui-input-inline{
+        width: 150px;
+    }
+</style>
+{/block}
+{block name="search"}
+<div class="form-group layui-form form-search">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">卡券名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="name"  autocomplete="off" class="layui-input" value="{$Request.param.name}">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">卡券状态</label>
+            <div class="layui-input-inline">
+                <select name="state" >
+                    <option value="">全部</option>
+                    {foreach $couponStates as $key=>$vo }
+                        <option value="{$key}" {$key == $Request.param.state ? 'selected' : ''}>{$vo}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">卡券类型</label>
+            <div class="layui-input-inline">
+                <select name="type" >
+                    <option value="">全部</option>
+                    {foreach $couponTypes as $key=>$vo }
+                        <option value="{$key}" {$key == $Request.param.type ? 'selected' : ''}>{$vo}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">地区</label>
+            <div class="layui-input-inline">
+                <select id="province" lay-filter="province" name="province">
+                    <option value="">全部</option>
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <select  id="city" lay-filter="city" name="city"></select>
+            </div>
+            <div class="layui-input-inline">
+                <select id="district" lay-filter="district" name="district"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline">
+                {:searchButton()}
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="menu"}卡券列表{/block}
+{block name="table-head"}
+    <tr>
+        <th>卡券名称</th>
+        <th>所属门店</th>
+        <th>LOGO</th>
+        <th>卡券类型</th>
+        <th>开始时间</th>
+        <th>结束时间</th>
+        <th>数量</th>
+        <th>原价</th>
+        <th>领取金额</th>
+        <th>审核状态</th>
+        <th>卡券状态</th>
+        <th>操作</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    {if condition="!$coupons->count()"}
+        <tr>
+            <td colspan="12" class="text-center">没有数据</td>
+        </tr>
+    {else/}
+        {foreach $coupons as $key => $coupon}
+            <tr>
+                <td>{$coupon->name}</td>
+                <td>{$coupon->store_name}</td>
+                <td>
+                    <img class="coupon_logo" src="__UPLOADS__/{$coupon->logo}"/>
+                </td>
+                <td>{present name="$couponTypes[$coupon['type']]"}{$couponTypes[$coupon['type']]}{/present}</td>
+                <td>{$coupon->start_time}</td>
+                <td>{$coupon->end_time}</td>
+                <td>{$coupon->total}</td>
+                <td>{$coupon->original_price}元</td>
+                <td>{$coupon->buying_price}元</td>
+                <td>
+                    {switch $coupon->state}
+                        {case 1}待审核{/case}
+                        {case 5}审核已拒绝{/case}
+                        {default /}审核通过
+                    {/switch}
+                </td>
+                <td>
+                    {$coupon->state == 3 ? '已发布' : '未发布'}
+                </td>
+                <td>
+                    {if $coupon.state == 1}
+                        {:passButton(url('CouponManage/pass' ), $coupon->id)}
+                        {:refuseButton(url('CouponManage/refuse' ), $coupon->id)}
+                    {/if}
+                    {if in_array($coupon['state'],$couponEditStates)}
+                        {:editButton(url('CouponManage/edit', ['id' => $coupon->id ]))}
+                    {else}
+                        {:editButton(url('CouponManage/edit', ['id' => $coupon->id ]),'查看')}
+                    {/if}
+                    {:deleteButton(url('CouponManage/delete'), $coupon->id)}
+                </td>
+            </tr>
+        {/foreach}
+    {/if}
+    <script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+    <script>
+        layui.use(['form','layer'],function () {
+            var layer = layui.layer,form = layui.form;
+            $('.pass').click(function () {
+                id = $(this).attr('data');
+                url = $(this).attr('data-url')
+                var index = layer.confirm('确认通过？', {
+                    btn: ['确认','取消'] //按钮
+                }, function(){
+                    layer.close(index)
+                    $.post(url, {id:id}, function (response) {
+                        if (!response.code) {
+                            warning(response.msg)
+                        } else {
+                            success(response.msg)
+                            setTimeout(function(){
+                                window.location.href = response.url
+                            }, response.wait * 1000);
+                        }
+                    })
+                });
+            })
+            $('.refuse').click(function () {
+                id = $(this).attr('data');
+                url = $(this).attr('data-url')
+                var index = layer.confirm('确认拒绝？', {
+                    btn: ['确认','取消'] //按钮
+                }, function(){
+                    layer.close(index)
+                    $.post(url, {id:id}, function (response) {
+                        if (!response.code) {
+                            warning(response.msg)
+                        } else {
+                            success(response.msg)
+                            setTimeout(function(){
+                                window.location.href = response.url
+                            }, response.wait * 1000);
+                        }
+                    })
+                });
+            })
+            var form,province,city,district;
+            var select_province = '{$Request.param.province}';
+            var select_city = '{$Request.param.city}';
+            var select_district = '{$Request.param.district}';
+            var is_first_select = true;
+            //获取地区数据
+            $.get("__JSON__/district.json",function(data){
+                province = data.result[0];
+                city = data.result[1];
+                district = data.result[2];
+                get_province();
+            });
+            //省份切换事件
+            form.on('select(province)',function (data) {
+                var id = $(data.elem).find("option:selected").attr("data-id");
+                if(id == undefined){
+                    $("#city").html('');
+                    $("#district").html('');
+                    form.render('select');
+                    return ;
+                }
+                toggle_province($('#province option:selected').data('id'));
+            });
+            //城市切换事件
+            form.on('select(city)',function (data) {
+                var id = $(data.elem).find("option:selected").attr("data-id");
+                var provinceid = $(data.elem).find("option:selected").attr("data-provinceid");
+                toggle_city(id,provinceid);
+            });
+            //获取省份
+            function get_province(){
+                let select_index = 0;
+                for (let x in province) {
+                    let selected = '';
+                    if(is_first_select && province[x].fullname == select_province){
+                        selected = 'selected';
+                        select_index = x;
+                    }
+                    $("#province").append('<option ' + selected + ' data-id="' + x + '" value="' + province[x].fullname + '">' + province[x].fullname + '</option>');
+                }
+                form.render('select');
+                if(select_province != ''){
+                    toggle_province(select_index);
+                }
+            }
+            //切换省份
+            function toggle_province(id) {
+                $("#city").html('');
+                $("#district").html('');
+                let i = province[id].cidx[0];
+                if(!city[i].hasOwnProperty('cidx')){
+                    $("#city").append('<option data-id = "-1" data-provinceid="' + i + '"  value="' + province[id].fullname + '">' + province[id].fullname + '</option>');
+                    toggle_city("-1",id);
+                    return ;
+                }
+                let select_index = i;
+                for(;i<=province[id].cidx[1];i++){
+                    let selected = '';
+                    if(is_first_select &&  city[i].fullname == select_city){
+                        selected = 'selected';
+                        select_index = i;
+                    }
+                    $("#city").append('<option ' + selected + ' data-id="' + i + '"  value="' + city[i].fullname + '">' + city[i].fullname + '</option>');
+                }
+                toggle_city(select_index);
+                form.render('select');
+            }
+            //切换市区
+            function toggle_city(id,provinceid) {
+                $("#district").html('');
+                if(id == "-1"){
+                    let i = province[provinceid].cidx[0];
+                    for(;i<=province[provinceid].cidx[1];i++){
+                        let selected = '';
+                        if(is_first_select &&  city[i].fullname == select_district){
+                            selected = 'selected';
+                        }
+                        $("#district").append('<option ' + selected + ' data-id="' + i + '"  value="' + city[i].fullname + '">' + city[i].fullname + '</option>');
+                    }
+                }else{
+                    let i = city[id].cidx[0];
+                    for(;i<=city[id].cidx[1];i++){
+                        let selected = '';
+                        if(is_first_select &&  district[i].fullname == select_district){
+                            selected = 'selected';
+                        }
+                        $("#district").append('<option ' + selected + ' data-id="' + i + '"  value="' + district[i].fullname + '">' + district[i].fullname + '</option>');
+                    }
+                }
+                is_first_select = false;
+                form.render('select');
+            }
+        });
+    </script>
+{/block}
+{block name="paginate"}
+    {$coupons->render()|raw}
+{/block}

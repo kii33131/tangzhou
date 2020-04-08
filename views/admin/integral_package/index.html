@@ -1,0 +1,33 @@
+{extend name="public:base" /}
+{block name="menu"}充值积分设置{/block}
+{block name="search"}
+{:createButton(url('integral_package/create'), '新建')}
+{/block}
+{block name="table-head"}
+    <tr>
+        <th>充值积分</th>
+        <th>充值金额</th>
+        <th>操作</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    {if condition="!$integralPackages->count()"}
+        <tr>
+            <td colspan="7" class="text-center">没有数据</td>
+        </tr>
+    {else/}
+        {foreach $integralPackages as $key => $integralPackage}
+            <tr>
+                <td>{$integralPackage->integral}</td>
+                <td>{$integralPackage->amount}</td>
+                <td>
+                    {:editButton(url('integralPackage/edit', ['id' => $integralPackage->id ]))}
+                    {:deleteButton(url('integralPackage/delete'), $integralPackage->id)}
+                </td>
+            </tr>
+        {/foreach}
+    {/if}
+{/block}
+{block name="paginate"}
+    {$integralPackages->render()|raw}
+{/block}

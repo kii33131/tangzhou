@@ -1,0 +1,225 @@
+{extend name="public:base" /}
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<style>
+    .coupon_logo{
+        width:50px;
+        height:50px;
+    }
+    .form-search .layui-form-label{
+        width: auto;
+    }
+
+    .form-search button{
+        height: 38px;
+        margin-bottom: 5px;
+    }
+    .layui-form-item .layui-input-inline{
+        width: 150px;
+    }
+    .examine .layui-input-inline{
+        width: 80px;
+    }
+</style>
+{/block}
+{block name="search"}
+<div class="form-group layui-form form-search">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">卡券名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="name"  autocomplete="off" class="layui-input" value="{$Request.param.name}">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">卡券状态</label>
+            <div class="layui-input-inline">
+                <select name="state" >
+                    <option value="">全部</option>
+                    {foreach $couponStates as $key=>$vo }
+                        <option value="{$key}" {$key == $Request.param.state ? 'selected' : ''}>{$vo}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">卡券类型</label>
+            <div class="layui-input-inline">
+                <select name="type" >
+                    <option value="">全部</option>
+                    {foreach $couponTypes as $key=>$vo }
+                        <option value="{$key}" {$key == $Request.param.type ? 'selected' : ''}>{$vo}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline">
+                {:searchButton()}
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline">
+                <a class="btn btn-primary" type="button" href="{:url('StoreManage/index')}">返回门店</a>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item examine">
+        <div class="layui-input-inline">
+            <button class="btn btn-success" type="button" id="batch_audit">批量审核</button>
+        </div>
+        <div class="layui-input-inline">
+            <button class="btn btn-danger" type="button" id="batch_rejection">批量拒绝</button>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="menu"}卡券列表{/block}
+{block name="table-head"}
+    <tr>
+        <th>
+            <input type="checkbox" id="check_all">
+        </th>
+        <th>卡券名称</th>
+        <th>LOGO</th>
+        <th>卡券类型</th>
+        <th>开始时间</th>
+        <th>结束时间</th>
+        <th>数量</th>
+        <th>领取数量</th>
+        <th>核销数量</th>
+        <th>领取金额</th>
+        <th>卡券状态</th>
+        <th>发布状态</th>
+        <th>操作</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    {if condition="!$coupons->count()"}
+        <tr>
+            <td colspan="8" class="text-center">没有数据</td>
+        </tr>
+    {else/}
+        {foreach $coupons as $key => $coupon}
+            <tr>
+                <td><input type="checkbox" class="check" value="{$coupon->id}"></td>
+                <td>{$coupon->name}</td>
+                <td>
+                    <img class="coupon_logo" src="__UPLOADS__/{$coupon->logo}"/>
+                </td>
+                <td>{$coupon->type == 1 ? '抢购券' : '促销券'}</td>
+                <td>{$coupon->start_time|date='Y-m-d'}</td>
+                <td>{$coupon->end_time|date='Y-m-d'}</td>
+                <td>{$coupon->total}</td>
+                <td>{$coupon->couponReceiveNum}</td>
+                <td>{$coupon->couponWriteOffNum}</td>
+                <td>{$coupon->buying_price}元</td>
+                <td>
+                    {switch $coupon->state}
+                        {case 1}待审核{/case}
+                        {case 5}审核已拒绝{/case}
+                        {default /}审核通过
+                    {/switch}
+                </td>
+                <td>
+                    {present name="$couponStates[$coupon['state']]"}{$couponStates[$coupon['state']]}{/present}
+                </td>
+                <td>
+                    {if $coupon.state == 1}
+                        {:passButton(url('CouponManage/pass' ), $coupon->id)}
+                        {:refuseButton(url('CouponManage/refuse' ), $coupon->id)}
+                    {/if}
+                    {if in_array($coupon['state'],$couponEditStates)}
+                        {:editButton(url('CouponManage/edit', ['id' => $coupon->id ]))}
+                    {else}
+                        {:editButton(url('CouponManage/edit', ['id' => $coupon->id ]),'查看')}
+                    {/if}
+                    {:deleteButton(url('CouponManage/delete',['is_store' => 1]), $coupon->id)}
+                </td>
+            </tr>
+        {/foreach}
+    {/if}
+    <script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+    <script>
+        layui.use(['form','layer'],function () {
+            var layer = layui.layer;
+            //批量审核
+            $('#batch_audit').click(function () {
+                var id_arr = [],i = 0;
+                $('.check:checked').each(function () {
+                    id_arr[i++] = $(this).val();
+                });
+                pass(id_arr.join(','));
+            });
+            //单个审核
+            $('.pass').click(function () {
+                id = $(this).attr('data');
+                pass(id);
+            });
+            function pass(ids){
+                if(ids == ''){
+                    warning("请选择需要审核的卡券");
+                    return ;
+                }
+                url = "{:url('CouponManage/pass')}";
+                var index = layer.confirm('确认通过？', {
+                    btn: ['确认','取消'] //按钮
+                }, function(){
+                    layer.close(index);
+                    $.post(url, {ids:ids,is_store:1}, function (response) {
+                        if (!response.code) {
+                            warning(response.msg);
+                        } else {
+                            success(response.msg);
+                            setTimeout(function(){
+                                location.reload();
+                            }, response.wait * 1000);
+                        }
+                    })
+                });
+            }
+            //批量拒绝
+            $('#batch_rejection').click(function () {
+                var id_arr = [],i = 0;
+                $('.check:checked').each(function () {
+                    id_arr[i++] = $(this).val();
+                });
+                refuse(id_arr.join(','));
+            });
+            function refuse(ids){
+                if(ids == ''){
+                    warning("请选择需要审核的卡券");
+                    return ;
+                }
+                url = "{:url('CouponManage/refuse')}";
+                var index = layer.confirm('确认拒绝？', {
+                    btn: ['确认','取消'] //按钮
+                }, function(){
+                    layer.close(index);
+                    $.post(url, {ids:ids,is_store:1}, function (response) {
+                        if (!response.code) {
+                            warning(response.msg);
+                        } else {
+                            success(response.msg);
+                            setTimeout(function(){
+                                location.reload();
+                            }, response.wait * 1000);
+                        }
+                    })
+                });
+            }
+
+            $('.refuse').click(function () {
+                id = $(this).attr('data');
+                refuse(id);
+            });
+            //全选
+            $('#check_all').click(function () {
+                $('.check').prop('checked',this.checked);
+            });
+        });
+    </script>
+{/block}
+{block name="paginate"}
+    {$coupons->render()|raw}
+{/block}

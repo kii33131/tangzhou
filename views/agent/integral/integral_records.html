@@ -1,0 +1,36 @@
+{extend name="public:base" /}
+{block name="css"}
+<style>
+    .ibox-title{
+        display:none;
+    }
+</style>
+{/block}
+{block name="menu"}余额记录{/block}
+{block name="table-head"}
+    <tr>
+        <th>充值/消费 积分</th>
+        <th>充值/消费 方式</th>
+        <th>门店</th>
+        <th>充值/消费 时间</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    {if condition="!$records->count()"}
+        <tr>
+            <td colspan="4" class="text-center">没有数据</td>
+        </tr>
+    {else/}
+        {foreach $records as $key => $record}
+            <tr>
+                <td>{$record['type'] == 1 ? '+' : '-'}{$record->integral}</td>
+                <td>{present name="$integralStates[$record['state']]"}{$integralStates[$record['state']]}{/present}</td>
+                <td>{$record->storeInfo->name ?? ''}</td>
+                <td>{$record->create_time}</td>
+            </tr>
+        {/foreach}
+    {/if}
+{/block}
+{block name="paginate"}
+    {$records->render()|raw}
+{/block}

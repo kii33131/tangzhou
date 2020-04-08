@@ -1,0 +1,38 @@
+{extend name="financial_summary:base" /}
+{block name="search"}
+<div class="form-group layui-form form-search">
+    <div class="layui-inline">
+        <label class="layui-form-label">月份</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" id="month" name="month">
+        </div>
+    </div>
+    <div class="layui-inline">
+        <label class="layui-form-label">筛选</label>
+        <div class="layui-input-inline">
+            <select lay-filter="filter" name="filter" >
+                {foreach $filters as $key=>$vo }
+                <option data-url="{:url('financialDetails/index',['filter'=>$key])}" value="{$key}" {$key == $Request.param.filter ? 'selected' : ''}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-inline">
+        <div class="layui-input-inline">
+            {:searchButton()}
+        </div>
+    </div>
+</div>
+{/block}
+{block name="table-head"}
+    <tr>
+        <th>充值总额</th>
+        <th>充值用户数</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    <tr>
+        <td>{$data['recharge_amount']}元</td>
+        <td>{$data['recharge_number']}</td>
+    </tr>
+{/block}

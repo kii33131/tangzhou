@@ -1,0 +1,13 @@
+{extend name="financial_summary:base" /}
+{block name="table-head"}
+    <tr>
+        <th>入驻门店数量</th>
+        <th>代理点收入</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    <tr>
+        <td>{$data['settled_number']}</td>
+        <td>{$data['agent_revenue']}元</td>
+    </tr>
+{/block}

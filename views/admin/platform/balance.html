@@ -1,0 +1,35 @@
+{extend name="public:form" /}
+{block name="menu"}平台余额{/block}
+{block name='action'}{:url('WechatConfig/index')}{/block}
+{block name="css"}
+<style>
+    .back{
+        display: none;
+    }
+    .container{
+        height: 100px;
+        text-align: center;
+    }
+    .container>.balance{
+        font-size: 18px;
+    }
+    .container>.balance>span{
+        font-size: 24px;
+    }
+    .container>.operation{
+        margin-top: 20px;
+    }
+</style>
+{/block}
+{block name="form"}
+    <div class="container">
+        <div class="balance">余额：<span>{$platform['balance']}元</span></div>
+        <div class="operation">
+            <a href="{:url('recharge')}" class="btn btn-info">充值余额</a>
+            <a href="{:url('balanceRecords')}" class="btn btn-info">充值记录</a>
+            <a href="{:url('balanceConsumption')}" class="btn btn-info">余额明细</a>
+        </div>
+    </div>
+{/block}
+{block name="submit"}
+{/block}

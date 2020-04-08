@@ -1,0 +1,71 @@
+{extend name="public:base" /}
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<style>
+    .form-search .layui-form-label{
+        width: auto;
+    }
+    .form-search button{
+        height: 38px;
+        margin-bottom: 5px;
+    }
+    .layui-form-item .layui-input-inline{
+        width: 150px;
+    }
+</style>
+{/block}
+{block name="search"}
+<div class="form-group layui-form form-search">
+    <div class="layui-inline">
+        <label class="layui-form-label">地区</label>
+        <div class="layui-input-inline">
+            <select id="province" lay-filter="province" name="province" {$province !="" ? 'disabled' : ''}>
+                <option value="">全部</option>
+            </select>
+        </div>
+        <div class="layui-input-inline">
+            <select  id="city" lay-filter="city" name="city" {$city !="" ? 'disabled' : ''}></select>
+        </div>
+        <div class="layui-input-inline">
+            <select id="district" lay-filter="district" name="district" {$district !="" ? 'disabled' : ''}></select>
+        </div>
+    </div>
+    <div class="layui-inline">
+        <label class="layui-form-label">筛选</label>
+        <div class="layui-input-inline">
+            <select lay-filter="filter">
+                {foreach $filters as $key=>$vo }
+                <option data-url="{:url('financialDetails/index',['filter'=>$key])}" value="{$key}" {$key == $Request.param.filter ? 'selected' : ''}>{$vo}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-inline">
+        <div class="layui-input-inline">
+            {:searchButton()}
+        </div>
+    </div>
+</div>
+{/block}
+{block name="menu"}商户财务明细表{/block}
+{block name="paginate"}
+{$lists->render()|raw}
+{/block}
+{block name="js"}
+<script>
+    var select_province = '{$province}';
+    var select_city = '{$city}';
+    var select_district = '{$district}';
+</script>
+{include file="public/district" /}
+<script>
+    layui.use(['form','layer'],function () {
+        var layer = layui.layer,form = layui.form;
+        form.on('select(filter)',function (data) {
+            var url = $(data.elem).find("option:selected").attr("data-url");
+            location.href = url;
+        });
+    });
+</script>
+
+{/block}

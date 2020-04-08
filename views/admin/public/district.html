@@ -1,0 +1,10 @@
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script>
+    if(select_province == undefined){
+        var select_province = '{$Request.param.province}';
+        var select_city = '{$Request.param.city}';
+        var select_district = '{$Request.param.district}';
+    }
+    var district_url = '__JSON__/district.json';
+</script>
+<script type="text/javascript" src="__JS__/admin/district.js"></script>

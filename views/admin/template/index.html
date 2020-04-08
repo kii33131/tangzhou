@@ -1,0 +1,45 @@
+{extend name="public:base" /}
+{block name="menu"}模板列表{/block}
+{block name="search"}
+{:createButton(url('create'), '新增')}
+{/block}
+
+{block name="table-head"}
+    <tr>
+        <th>模板名称</th>
+        <th>模板内容</th>
+        <th>创建时间</th>
+        <th>创建人</th>
+        <th>操作</th>
+    </tr>
+{/block}
+
+
+
+{block name="table-body"}
+
+{if condition="!$templates->count()"}
+<tr>
+    <td colspan="5" class="text-center">没有数据</td>
+</tr>
+{else/}
+{foreach $templates as $key => $template}
+<tr>
+    <td>{$template->name}</td>
+    <td>{$template->content}</td>
+    <td>{$template->create_time}</td>
+    <td>{$template->user_name}</td>
+    <td>
+      {:editButton(url('Template/edit', ['id' =>$template->id ]))}
+      {:deleteButton(url('Template/delete'), $template->id)}
+
+    </td>
+
+</tr>
+{/foreach}
+{/if}
+{/block}
+{block name="paginate"}
+{$templates->render()|raw}
+
+{/block}

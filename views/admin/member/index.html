@@ -1,0 +1,58 @@
+{extend name="public:base" /}
+{block name="menu"}会员管理{/block}
+{block name="css"}
+    <style>
+        .picture{
+            width: 60px;
+            height: 60px;
+        }
+    </style>
+{/block}
+{block name="search"}
+        <div class="form-group">
+            <label for="name" class="sr-only">用户名</label>
+            <input type="text" name="name" placeholder="请输入昵称" id="name" class="form-control" value="{$Request.param.name}">
+        </div>
+        {:searchButton()}
+{/block}
+{block name="table-head"}
+    <tr>
+        <th></th>
+        <th>昵称</th>
+        <th>头像</th>
+        <th>余额</th>
+        <th>积分</th>
+        <th>创建时间</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    {if condition="!$members->count()"}
+        <tr>
+            <td colspan="6" class="text-center">没有数据</td>
+        </tr>
+    {else/}
+        {foreach $members as $key => $member}
+            <tr>
+                <td>{$start + $key}</td>
+                <td>{$member->name}</td>
+                <td>
+                    <img class="picture" src="{$member->picture}"/>
+                </td>
+                <td>
+                    <a href="{:url('MemberBalanceRecord/index',['member_id'=>$member->id])}">
+                        {$member->balance}
+                    </a>
+                </td>
+                <td>
+                    <a href="{:url('MemberIntegralRecord/index',['member_id'=>$member->id])}">
+                        {$member->integral}
+                    </a>
+                </td>
+                <td>{$member->create_time}</td>
+            </tr>
+        {/foreach}
+    {/if}
+{/block}
+{block name="paginate"}
+    {$members->render()|raw}
+{/block}

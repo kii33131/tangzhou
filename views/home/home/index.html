@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<body>
+
+<div ><img style="" class="imsg" src=""></div>
+
+<p class="aa" style="text-align: center;font-size: 1.2rem ;margin-top: 60px;display: block;border-bottom: 1px solid #b6bcbf;width: 100%">漫画下载</p>
+<div>
+    <p style="text-align: center;font-size:1.4rem ; margin-top: 80px">输入您的验证码下载您的漫画作品</p>
+    <input type="text" name="code" class="code" style="font-size: 1.4rem;width: 80%;height: 36px;margin-left: 10%;border: #0C0C0C 1px solid;margin-top: 30px">
+
+
+    <div class="tijiao" style="font-weight: bold;line-height:3.4rem;width: 80%;height: 50px;color: white;margin-left: 10%;background: #00B83F;display: block;text-align: center;font-size:1.3rem;margin-top: 60px">确认</div>
+
+</div>
+
+</body>
+<script src="__JS__/jquery.min.js?v=2.1.4"></script>
+
+<script>
+
+    $(function () {
+
+        $('.tijiao').click(function () {
+            var code = $('.code').val();
+            $.ajax({
+                url: 'http://116.62.51.24/api/user/img',
+                type: 'POST',
+                // 设置的是请求参数
+                data: { code: code },
+                // 用于设置响应体的类型 注意 跟 data 参数没关系！！！
+                dataType: 'json',
+                success: function (res) {
+                    // 一旦设置的 dataType 选项，就不再关心 服务端 响应的 Content-Type 了
+                    // 客户端会主观认为服务端返回的就是 JSON 格式的字符串
+
+                    if(res.error_code==0){
+                        window.location.href="http://116.62.51.24/img?backurl="+'http://116.62.51.24/'+res.data.img;
+                       // alert('aaa');
+                    }else{
+
+                    }
+                   // console.log(res)
+                },
+                error: function(res) {
+                    console.log(res)                }
+            })
+
+        })
+
+
+    })
+    
+</script>
+
+</html>

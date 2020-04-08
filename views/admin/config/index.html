@@ -1,0 +1,128 @@
+{extend name="public:form" /}
+{block name="menu"}系统设置 / 基本设置{/block}
+{block name='action'}{:url('Config/index')}{/block}
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<style>
+    .layui-form-switch{
+        height: auto;
+    }
+    .back{
+        display: none;
+    }
+</style>
+{/block}
+{block name="form"}
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">入驻金额</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="entry_amount" required value="{$config.entry_amount}">
+            </div>
+            <label class="control-label">元</label>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">入驻赠送积分</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="entry_gift_points" required value="{$config.entry_gift_points}">
+            </div>
+            <label class="control-label">分</label>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">入驻返利比例</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="entry_rebate" required value="{$config.entry_rebate}">
+            </div>
+            <label class="control-label">%</label>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">积分返利比例</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="integral_rebate" required value="{$config.integral_rebate}">
+            </div>
+            <label class="control-label">%</label>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">卡券发布所需积分</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="coupon_release_integral" required value="{$config.coupon_release_integral}">
+            </div>
+            <label class="control-label">分</label>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">卡券领取所需金额</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="coupon_amount" required value="{$config.coupon_amount}">
+            </div>
+            <label class="control-label">元</label>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">卡券下载所需积分</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="download_integral" required value="{$config.download_integral}">
+            </div>
+            <label class="control-label">分</label>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">提现手续费比例</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="service_charge" required value="{$config.service_charge}">
+            </div>
+            <label class="control-label">%</label>
+        </div>
+    </div>
+</div>
+<div class="row layui-form">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">入驻自动审核</label>
+            <div class="col-sm-2">
+                <input type="checkbox" {$config.entry_audit == 1 ? 'checked' : ''} name="entry_audit" lay-skin="switch" lay-text="开|关" value="1">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row layui-form">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">卡券自动审核</label>
+            <div class="col-sm-2">
+                <input type="checkbox" {$config.coupon_audit == 1 ? 'checked' : ''} name="coupon_audit" lay-skin="switch" lay-text="开|关" value="1">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row layui-form">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">提现自动审核</label>
+            <div class="col-sm-2">
+                <input type="checkbox" {$config.cash_audit == 1 ? 'checked' : ''} name="cash_audit" lay-skin="switch" lay-text="开|关" value="1">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.use(['form'],function () {
+        
+    });
+</script>
+{/block}

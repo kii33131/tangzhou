@@ -1,0 +1,36 @@
+{extend name="public:base" /}
+{block name="css"}
+<style>
+    .ibox-title{
+        display:none;
+    }
+</style>
+{/block}
+{block name="menu"}充值列表{/block}
+{block name="table-head"}
+    <tr>
+        <th>充值金额</th>
+        <th>充值方式</th>
+        <th>充值人员</th>
+        <th>充值时间</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    {if condition="!$records->count()"}
+        <tr>
+            <td colspan="4" class="text-center">没有数据</td>
+        </tr>
+    {else/}
+        {foreach $records as $key => $record}
+            <tr>
+                <td>{$record->amount}</td>
+                <td>{present name="$balancePayType[$record['type']]"}{$balancePayType[$record['type']]}{/present}</td>
+                <td>{$record->userInfo->name ?? ''}</td>
+                <td>{$record->create_time}</td>
+            </tr>
+        {/foreach}
+    {/if}
+{/block}
+{block name="paginate"}
+    {$records->render()|raw}
+{/block}

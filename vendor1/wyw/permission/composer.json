@@ -1,0 +1,24 @@
+{
+    "name": "wyw/permission",
+    "description": "rbac",
+    "type": "library",
+    "require": {
+        "topthink/think-migration": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "think\\permissions\\":"src/"
+        },
+        "files": [
+            "src/helper.php"
+        ]
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "yanwenwu",
+            "email": "njphper@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}

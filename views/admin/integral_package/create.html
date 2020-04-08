@@ -1,0 +1,17 @@
+{extend name="public:form" /}
+{block name="menu"}新增积分套餐{/block}
+{block name='action'}{:url('IntegralPackage/create')}{/block}
+{block name="form"}
+    <div class="form-group">
+        <label class="col-sm-2 control-label">购买金额</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" name="amount" required>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">获得积分</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" name="integral" required>
+        </div>
+    </div>
+{/block}

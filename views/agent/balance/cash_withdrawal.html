@@ -1,0 +1,82 @@
+{extend name="public:form" /}
+{block name="menu"}余额提现{/block}
+{block name='action'}{:url('Balance/cashWithdrawal')}{/block}
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<style>
+    .bank_div{
+        display:none;
+    }
+</style>
+
+{/block}
+{block name="form"}
+        <div class="row layui-form">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">提现金额</label>
+                    <div class="col-sm-4">
+                        <input type="number" class="form-control" id="amount" name="amount" required value="">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">提现方式</label>
+                    <div class="col-sm-4">
+                        <input type="radio" name="mode" value="1" title="微信" checked="" lay-filter="mode">
+                        <input type="radio" name="mode" value="2" title="银行卡" lay-filter="mode">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 bank_div">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">真实姓名</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="real_name" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 bank_div">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">银行卡号</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="bank_card_number" value="">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 bank_div">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">所属银行</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="bank" value="">
+                    </div>
+                </div>
+            </div>
+        </div>
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script>
+    var int;
+    layui.use(['form','layer'],function () {
+        var layer = layui.layer, form = layui.form;
+        $('#submit').click(function () {
+            var amount = $('#amount').val();
+            if(!/^\d+\.?\d{0,2}$/.test(amount)){
+                layer.msg('金额输入有误');
+                return false;
+            }
+        });
+        form.on('radio(mode)', function(data){
+            if(data.value == 1){
+                $('.bank_div').hide();
+            }else{
+                $('.bank_div').show();
+            }
+        });
+    });
+</script>
+
+{/block}
+{block name="submit"}
+<button id="submit" class="btn btn-primary" type="submit">提交</button>
+{/block}

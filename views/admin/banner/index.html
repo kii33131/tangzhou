@@ -1,0 +1,96 @@
+{extend name="public:base" /}
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<style>
+    td>img{
+        width:50px;
+        height:50px;
+    }
+    .form-search .layui-form-label{
+        width: auto;
+    }
+    .form-search button{
+        height: 38px;
+        margin-bottom: 5px;
+    }
+    .layui-form-item .layui-input-inline{
+        width: 150px;
+    }
+</style>
+{/block}
+
+{block name="search"}
+<div class="form-group layui-form form-search">
+    <div class="layui-form-item">
+        {:createButton(url('create'), '新增')}
+        <div class="layui-inline">
+            <label class="layui-form-label">地区</label>
+            <div class="layui-input-inline">
+                <select id="province" lay-filter="province" name="province">
+                    <option value="">全部</option>
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <select  id="city" lay-filter="city" name="city"></select>
+            </div>
+            <div class="layui-input-inline">
+                <select id="district" lay-filter="district" name="district"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline">
+                {:searchButton()}
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="menu"}轮播图列表{/block}
+{block name="table-head"}
+    <tr>
+        <th>排序</th>
+        <th>名称</th>
+        <th>省</th>
+        <th>市</th>
+        <th>区</th>
+        <th>图1</th>
+        <th>图2</th>
+        <th>图3</th>
+        <th>创建时间</th>
+        <th>操作</th>
+    </tr>
+{/block}
+
+{block name="table-body"}
+
+{if condition="!$banners->count()"}
+<tr>
+    <td colspan="10" class="text-center">没有数据</td>
+</tr>
+{else/}
+{foreach $banners as $key => $banner}
+<tr>
+    <td>{$key+1}</td>
+    <td>{$banner->title}</td>
+    <td>{$banner->province == '' ? '全部' : $banner->province}</td>
+    <td>{$banner->city == '' ? '全部' : $banner->city}</td>
+    <td>{$banner->district == '' ? '全部' : $banner->district}</td>
+    <td>{present name="$banner['imgs'][0]"}<img src="__UPLOADS__/{$banner['imgs'][0]}">{/present}</td>
+    <td>{present name="$banner['imgs'][1]"}<img src="__UPLOADS__/{$banner['imgs'][1]}">{/present}</td>
+    <td>{present name="$banner['imgs'][2]"}<img src="__UPLOADS__/{$banner['imgs'][2]}">{/present}</td>
+    <td>{$banner->create_time}</td>
+    <td>
+        {:editButton(url('Banner/edit', ['id' =>$banner->id ]))}
+        {:deleteButton(url('Banner/delete'), $banner->id)}
+    </td>
+</tr>
+{/foreach}
+{/if}
+{/block}
+{block name="js"}
+{include file="public/district" /}
+{/block}
+{block name="paginate"}
+{$banners->render()|raw}
+
+{/block}

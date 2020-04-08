@@ -1,0 +1,32 @@
+{extend name="public:base" /}
+{block name="menu"}行业分类{/block}
+{block name="search"}
+{:createButton(url('create'), '新增')}
+{/block}
+{block name="table-head"}
+<tr>
+    <th>行业名称</th>
+    <th>创建时间</th>
+    <th>创建人员</th>
+    <th>操作</th>
+</tr>
+{/block}
+{block name="table-body"}
+{if condition="!$industrys->count()"}
+<tr>
+    <td colspan="7" class="text-center">没有数据</td>
+</tr>
+{else/}
+{foreach $industrys as $industry}
+<tr>
+    <td>{:str_repeat('&nbsp;&nbsp;', $industry->level)}{$industry->name}</td>
+    <td>{$industry->created_at}</td>
+    <td>{$industry->user->name ?? ''}</td>
+    <td>
+        {:editButton(url('IndustryCategorySettings/edit', ['id' => $industry->id ]))}
+        {:deleteButton(url('delete'), $industry->id)}
+    </td>
+</tr>
+{/foreach}
+{/if}
+{/block}

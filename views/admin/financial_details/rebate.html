@@ -1,0 +1,35 @@
+{extend name="financial_details:base" /}
+{block name="table-head"}
+    <tr>
+        <th>返利用户</th>
+        <th>返利金额</th>
+        <th>返利时间</th>
+        <th>返利方式</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    {if condition="!$lists->count()"}
+        <tr>
+            <td colspan="4" class="text-center">没有数据</td>
+        </tr>
+    {else/}
+        {foreach $lists as $key => $val}
+            <tr>
+                <td>{$val->name}</td>
+                <td>{$val->amount}元</td>
+                <td>{$val->create_time}</td>
+                <td>{present name="$val['state']"}{$val['state']}{/present}</td>
+            </tr>
+        {/foreach}
+    {/if}
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script>
+    layui.use(['form','layer'],function () {
+        var form = layui.form;
+        form.on('select(filter)',function (data) {
+            var url = $(data.elem).find("option:selected").attr("data-url");
+            location.href = url;
+        });
+    });
+</script>
+{/block}

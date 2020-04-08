@@ -1,0 +1,228 @@
+{extend name="public:form" /}
+{block name="menu"}新增代理{/block}
+
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<style>
+    .layui-form-select{
+        max-width: 160px;
+    }
+    .back{
+        display: none;
+    }
+</style>
+{/block}
+{block name='action'}{:url('create')}{/block}
+{block name="form"}
+<div class="row layui-form">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">代理帐号</label>
+            <div class="col-sm-6">
+                <input   type="text" class="form-control" name="account" required value="">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">密码</label>
+            <div class="col-sm-6">
+                <input   type="password" class="form-control" name="password"  required>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">确认密码</label>
+            <div class="col-sm-6">
+                <input   type="password" class="form-control" name="relpassword"  required>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">代理地区</label>
+            <div class="col-sm-10">
+                <div class="layui-input-inline">
+                    <select  id="province" lay-filter="province" name="province"></select>
+                </div>
+                <div class="layui-input-inline">
+                    <select  id="city" lay-filter="city" name="city">
+                        <option data-id="-1" value="">全部</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <select  id="district" lay-filter="district" name="district"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">联系人</label>
+            <div class="col-sm-6">
+                <input   type="text" class="form-control" name="name" required >
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">联系电话</label>
+            <div class="col-sm-6">
+                <input   type="text" class="form-control" name="phone" required>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">抽水比例</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="pumping_ratio" required >
+            </div>
+            <label class="control-label">%</label>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">入驻返利</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="residence_rebate" required >
+            </div>
+            <label class="control-label">%</label>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">微信用户选择</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="wechat_user" readonly placeholder="选择微信用户">
+                <input type="hidden" class="form-control" name="member_id" id="member_id" >
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script type="text/javascript" src="__PLUGINS__/js/zoomify/zoomify.min.js"></script>
+<script>
+    var form,province,city,district;
+    var select_province = '';
+    var select_city = '';
+    var select_district = '';
+    var is_first_select = true;
+    //选择微信用户
+    function choose_wechat(id,name){
+        $('#member_id').val(id);
+        $('#wechat_user').val(name);
+    }
+    layui.use(['form','layer'],function () {
+        var layer = layui.layer;
+        form = layui.form;
+        var loadding_index = '';
+        $('#wechat_user').click(function () {
+            layer.open({
+                type: 2,
+                title: '选择微信号',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['400px', '90%'],
+                content: '{:url("agent/chooseWechat")}',
+                success:function (layero,index) {
+                }
+            });
+        });
+        //获取地区数据
+        $.get("__JSON__/district.json",function(data){
+            province = data.result[0];
+            city = data.result[1];
+            district = data.result[2];
+            get_province();
+        });
+        //省份切换事件
+        form.on('select(province)',function (data) {
+            var id = $(data.elem).find("option:selected").attr("data-id");
+            toggle_province($('#province option:selected').data('id'));
+        });
+        //城市切换事件
+        form.on('select(city)',function (data) {
+            var id = $(data.elem).find("option:selected").attr("data-id");
+            var provinceid = $(data.elem).find("option:selected").attr("data-provinceid");
+            toggle_city(id,provinceid);
+        });
+        //获取省份
+        function get_province(){
+            let select_index = 0;
+            for (let x in province) {
+                let selected = '';
+                if(is_first_select && province[x].fullname == select_province){
+                    selected = 'selected';
+                    select_index = x;
+                }
+                $("#province").append('<option ' + selected + ' data-id="' + x + '" value="' + province[x].fullname + '">' + province[x].fullname + '</option>');
+            }
+            toggle_province(select_index);
+        }
+        //切换省份
+        function toggle_province(id) {
+            $("#city").html('');
+            $("#district").html('');
+            var i = province[id].cidx[0];
+            $("#city").append('<option data-id="-2" value="">全部</option>');
+            if(!city[i].hasOwnProperty('cidx')){
+                $("#city").append('<option data-id = "-1" data-provinceid="' + i + '"  value="' + province[id].fullname + '">' + province[id].fullname + '</option>');
+                // toggle_city("-1",id);
+                toggle_city("-2");
+                return ;
+            }
+            let select_index = i;
+            for(;i<=province[id].cidx[1];i++){
+                let selected = '';
+                if(is_first_select &&  city[i].fullname == select_city){
+                    selected = 'selected';
+                    select_index = i;
+                }
+                $("#city").append('<option ' + selected + ' data-id="' + i + '"  value="' + city[i].fullname + '">' + city[i].fullname + '</option>');
+            }
+            toggle_city('-2');
+            form.render('select');
+        }
+        //切换市区
+        function toggle_city(id,provinceid) {
+            $("#district").html('');
+            $("#district").append('<option data-id="-2" value="">全部</option>');
+            if(id == "-1"){
+                let i = province[provinceid].cidx[0];
+                for(;i<=province[provinceid].cidx[1];i++){
+                    let selected = '';
+                    if(is_first_select &&  city[i].fullname == select_district){
+                        selected = 'selected';
+                    }
+                    $("#district").append('<option ' + selected + ' data-id="' + i + '"  value="' + city[i].fullname + '">' + city[i].fullname + '</option>');
+                }
+            }else if(id == "-2"){
+                form.render('select');
+            }else{
+                let i = city[id].cidx[0];
+                for(;i<=city[id].cidx[1];i++){
+                    let selected = '';
+                    if(is_first_select &&  district[i].fullname == select_district){
+                        selected = 'selected';
+                    }
+                    $("#district").append('<option ' + selected + ' data-id="' + i + '"  value="' + district[i].fullname + '">' + district[i].fullname + '</option>');
+                }
+            }
+            is_first_select = false;
+            form.render('select');
+        }
+    });
+</script>
+{/block}

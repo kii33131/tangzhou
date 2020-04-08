@@ -1,0 +1,64 @@
+{extend name="public:form" /}
+{block name="css"}
+<style>
+    #icon_img{
+        height:80px;
+        width: 80px;
+    }
+</style>
+{/block}
+{block name="menu"}行业分类设置 / 编辑行业{/block}
+{block name='action'}{:url('IndustryCategorySettings/edit')}{/block}
+{block name="form"}
+<div class="form-group">
+    <label class="col-sm-2 control-label">选择行业分类</label>
+    <div class="col-sm-4">
+        <select class="form-control m-b" name="pid">
+            <option value="0">一级分类</option>
+            {foreach $industrys as $_industry}
+                {if condition="$industry->id neq $_industry->id"}
+                     <option value="{$_industry->id}" {if condition="$industry->pid eq $_industry->id"}selected{/if}>{:str_repeat('&nbsp;&nbsp;', $_industry->level)} {$_industry->name}</option>
+                {/if}
+            {/foreach}
+        </select>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">菜单名称</label>
+    <div class="col-sm-4">
+        <input type="text" class="form-control" name="name" required value="{$industry->name}">
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-sm-2 control-label">图标</label>
+    <div class="col-sm-4">
+        <img src="__UPLOADS__/{$industry.icon}" class="picture zoomify" id="icon_img">
+        <input type="file" name="icon" style="display: none;" id="icon_input">
+    </div>
+</div>
+<input type="hidden" name="id" value="{$industry->id}">
+<script>
+    //图标
+    $('#icon_img').click(function () {
+        $('#icon_input').click();
+    });
+    $("#icon_input").on("change", function() {
+        var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
+        if(objUrl) {
+            $("#icon_img").attr("src", objUrl); //将图片路径存入src中，显示出图片
+        }
+    });
+    function getObjectURL(file) {
+        var url = null;
+        if(window.createObjectURL != undefined) { // basic
+            url = window.createObjectURL(file);
+        } else if(window.URL != undefined) { // mozilla(firefox)
+            url = window.URL.createObjectURL(file);
+        } else if(window.webkitURL != undefined) { // webkit or chrome
+            url = window.webkitURL.createObjectURL(file);
+        }
+        return url;
+    }
+</script>
+{/block}

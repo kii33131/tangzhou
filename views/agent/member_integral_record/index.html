@@ -1,0 +1,34 @@
+{extend name="public:base" /}
+{block name="menu"}余额记录{/block}
+{block name="table-head"}
+    <tr>
+        <th></th>
+        <th>积分</th>
+        <th>交易类型</th>
+        <th>账户积分</th>
+        <th>时间</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    {if condition="!$records->count()"}
+        <tr>
+            <td colspan="4" class="text-center">没有数据</td>
+        </tr>
+    {else/}
+        {foreach $records as $key => $record}
+            <tr>
+                <td>{$start + $key}</td>
+                <td>
+                    {$record['type'] == 1 ? '+' : '-'}
+                    {$record->integral}
+                </td>
+                <td>{$record['mode']}</td>
+                <td>{$record['residual_integral']}</td>
+                <td>{$record->create_time}</td>
+            </tr>
+        {/foreach}
+    {/if}
+{/block}
+{block name="paginate"}
+    {$records->render()|raw}
+{/block}

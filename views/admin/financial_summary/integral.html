@@ -1,0 +1,15 @@
+{extend name="financial_summary:base" /}
+{block name="table-head"}
+    <tr>
+        <th>充值总金额</th>
+        <th>充值总积分</th>
+        <th>充值用户数</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    <tr>
+        <td>{$data['recharge_amount']}元</td>
+        <td>{$data['integral']}分</td>
+        <td>{$data['recharge_number']}</td>
+    </tr>
+{/block}

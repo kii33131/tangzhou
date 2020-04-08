@@ -1,0 +1,13 @@
+{extend name="financial_summary:base" /}
+{block name="table-head"}
+    <tr>
+        <th>卡券领取数量</th>
+        <th>平台收入</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    <tr>
+        <td>{$data['receive_number']}</td>
+        <td>{$data['platform_revenue']}元</td>
+    </tr>
+{/block}

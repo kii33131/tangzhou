@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{:config('admin.title')}</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="__CSS__/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__CSS__/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__CSS__/animate.css" rel="stylesheet">
+    <link href="__CSS__/style.css?v=4.1.0" rel="stylesheet">
+    <link href="__PLUGINS__/css/toastr/toastr.min.css" rel="stylesheet">
+    {block name="css"}{/block}
+    <style>
+        .page-form-control {
+            background-color: rgb(255, 255, 255);
+            background-image: none;
+            color: inherit;
+            font-size: 1px;
+            border-color: rgb(229, 230, 231);
+            border-image: initial;
+            border-radius: 1px;
+            padding: 5px 12px;
+        }
+        .page-form-control-input {
+            background-color: rgb(255, 255, 255);
+            background-image: none;
+            color: inherit;
+            font-size: 1px;
+            padding: 5px 5px 1px 12px;
+            width: 10%;
+        }
+        .picture{
+            width: 80px;
+            height: 80px;
+        }
+        .form-search{
+            display: inline-block;
+        }
+        .search-button{
+            margin-bottom: 3px;
+        }
+        body{
+            background-color: #fff;
+        }
+        .project_page{
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+<div class="">
+    <form role="form" class="form-inline">
+        <div class="ibox-title">
+            <div class="form-group form-search">
+                <label for="name" class="sr-only">用户名</label>
+                <input type="text" name="name" placeholder="请输入用户名" id="name" class="form-control" value="">
+            </div>
+            <button class="btn btn-white search-button" type="submit"><i class="fa fa-search"></i> 搜索</button>
+        </div>
+    </form>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>头像</th>
+                    <th>昵称</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {if condition="!$members->count()"}
+                    <tr>
+                        <td colspan="3" class="text-center">没有数据</td>
+                    </tr>
+                {else/}
+                    {foreach $members as $key => $member}
+                    <tr>
+                        <td>
+                            <img class="picture" src="{$member->picture}" >
+                        </td>
+                        <td>{$member->name}</td>
+                        <td>
+                            <button data-id="{$member->id}" data-name="{$member->name}" type="button" class="btn btn-xs btn-primary choose"><i class="fa fa-check-square-o"></i>选择</button>
+                        </td>
+                    </tr>
+                    {/foreach}
+                {/if}
+            </tbody>
+        </table>
+    </div>
+    {$members->render()|raw}
+</div>
+<!-- 全局js -->
+<script src="__JS__/jquery.min.js?v=2.1.4"></script>
+<script src="__JS__/bootstrap.min.js?v=3.3.6"></script>
+<script src="__PLUGINS__/js/toastr/toastr.min.js"></script>
+<script src="__JS__/content.js?v=1.0.0"></script>
+<script src="__PLUGINS__/js/layer/layer.js"></script>
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script>
+$('.choose').click(function (e) {
+    var id = $(this).data('id');
+    var name = $(this).data('name');
+    parent.choose_wechat(id,name);
+    var index = parent.layer.getFrameIndex(window.name);
+    parent.layer.close(index);
+});
+</script>
+</body>
+</html>
+<script>
+</script>

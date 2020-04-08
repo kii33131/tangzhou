@@ -1,0 +1,16 @@
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script>
+    if(select_province == undefined || select_province == ''){
+        var select_province = '{$Request.param.province}';
+    }
+
+    if(select_city == undefined || select_city == ''){
+        var select_city = '{$Request.param.city}';
+    }
+
+    if(select_district == undefined || select_district == ''){
+        var select_district = '{$Request.param.district}';
+    }
+    var district_url = '__JSON__/district.json';
+</script>
+<script type="text/javascript" src="__JS__/admin/district.js"></script>

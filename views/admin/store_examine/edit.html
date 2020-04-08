@@ -1,0 +1,424 @@
+{extend name="public:form" /}
+{block name="menu"}修改门店信息{/block}
+{block name='action'}{:url('StoreExamine/edit')}{/block}
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<link href="__PLUGINS__/js/zoomify/zoomify.min.css" rel="stylesheet">
+<style>
+    .picture{
+        height: 100px;
+        border: 1px solid #e2e2e2;
+        cursor: pointer;
+
+    }
+    .layui-laydate-content>.layui-laydate-list {
+        padding-bottom: 0px;
+        overflow: hidden;
+    }
+    .layui-laydate-content>.layui-laydate-list>li{
+        width:50%
+    }
+
+    .merge-box .scrollbox .merge-list {
+        padding-bottom: 5px;
+    }
+    .btn-default,.btn-default:focus {
+        color: #333;
+        background-color: #fff;
+        border-color: #ccc;
+    }
+    .id_card>div{
+       margin-top: 10px;
+    }
+    #exhibition_block>div{
+        position: relative;
+        display: inline-block;
+        margin: 5px;
+    }
+    #exhibition_block>div>img{
+        height: 100px;
+    }
+    #exhibition_block>div>.layui-icon-close{
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        right: 0;
+        color: #fff;
+        font-weight: 800;
+    }
+    .none{
+        display: none;
+    }
+    .layui-disabled{
+        color: #676767!important;
+    }
+</style>
+
+{/block}
+{block name="form"}
+<div class="row layui-form">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店名称</label>
+            <div class="col-sm-6">
+                <input readonly  type="text" class="form-control" name="name" required value="{$store.name}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店logo</label>
+            <div class="col-sm-8">
+                <img src="__UPLOADS__/{$store.logo}" class="picture" id="logo_img">
+                <span>（建议尺寸大小100*100）</span>
+                <input readonly  type="file" name="logo" style="display: none;" id="logo_input">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店地址</label>
+            <div class="col-sm-10">
+                <div class="layui-input-inline">
+                    <select disabled id="province" lay-filter="province" name="province"></select>
+                </div>
+                <div class="layui-input-inline">
+                    <select disabled id="city" lay-filter="city" name="city"></select>
+                </div>
+                <div class="layui-input-inline">
+                    <select disabled id="district" lay-filter="district" name="district"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">详细地址</label>
+            <div class="col-sm-6">
+                <input readonly  type="text" class="form-control" name="address" required value="{$store.address}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">联系人</label>
+            <div class="col-sm-6">
+                <input readonly  type="text" class="form-control" name="contacts" required value="{$store.contacts}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">联系电话</label>
+            <div class="col-sm-6">
+                <input readonly  type="text" class="form-control" name="phone" required value="{$store.phone}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店联系电话</label>
+            <div class="col-sm-6">
+                <input readonly  type="text" class="form-control" name="store_mobile" required value="{$store.store_mobile}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店类型</label>
+            <div class="col-sm-6">
+                <div class="layui-input-inline">
+                    <select disabled name="parent_industry_category" lay-filter="parent_industry_category">
+<!--                        <option value="">请选择类别</option>-->
+                        {foreach $parentIndustryCategory as $key=>$category }
+                            <option {$category.id == $store.industry_category_pid ? 'selected' : ''} value="{$category.id}">{$category.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="layui-input-inline" >
+                    <select disabled name="industry_category" lay-filter="industry_category" id="industry_category">
+<!--                        <option value="">请选择类型</option>-->
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">营业执照</label>
+            <div class="col-sm-6">
+                <img src="__UPLOADS__/{$store.business_license}" id="business_license_img" class="picture">
+                <input type="file" name="business_license" style="display: none;" id="business_license_input">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">身份证</label>
+            <div class="col-sm-6 id_card">
+                <div class="col-sm-12">
+                    <img src="__UPLOADS__/{$store.id_card_positive}" id="id_card_positive_img" class="picture">
+                    <input type="file" name="id_card_positive" style="display: none;" id="id_card_positive_input">
+                </div>
+                <div class="col-sm-12">
+                    <img src="__UPLOADS__/{$store.id_card_back}" class="picture" id="id_card_back_img">
+                    <input type="file" name="id_card_back" style="display: none;" id="id_card_back_input">
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">商家店铺图</label>
+            <div class="col-sm-10">
+                <div class="layui-upload">
+                    <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+<!--                        预览图：-->
+                        <div class="layui-upload-list" id="exhibition_block">
+                            {foreach $store.exhibition as $key=>$vo }
+                                <div>
+                                    <img src="__UPLOADS__/{$vo}" class="layui-upload-img">
+                                    <input type="text" name="exhibition[]" class="none" value="{$vo}">
+                                </div>
+                            {/foreach}
+                        </div>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">营业时间</label>
+            <div class="col-sm-6">
+                <input readonly  type="text" class="layui-input" id="business_hours" name="business_hours" placeholder=" - " value="{$store.start_hours} - {$store.end_hours}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店简介</label>
+            <div class="col-sm-6">
+                <textarea readonly  class="form-control" name="introduce" rows="5">{$store.introduce}</textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">审核状态</label>
+            <div class="col-sm-6">
+                <input readonly  type="text" class="form-control" name="address" required value="{present name="$storeStates[$store['state']]"}{$storeStates[$store['state']]}{/present}">
+            </div>
+        </div>
+    </div>
+    {if $store['state'] == 3}
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">拒绝原因</label>
+            <div class="col-sm-6">
+                <textarea readonly  class="form-control" name="introduce" rows="5">{$store.reject_reason}</textarea>
+            </div>
+        </div>
+    </div>
+    {/if}
+</div>
+    <input type="hidden" name="id" value="{$store.id}">
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script type="text/javascript" src="__PLUGINS__/js/zoomify/zoomify.min.js"></script>
+<script>
+    var form,province,city,district;
+    var select_province = '{$store.province}';
+    var select_city = '{$store.city}';
+    var select_district = '{$store.district}';
+    var is_first_select = true;
+    layui.use(['laydate','form','layer','upload'],function () {
+        var laydate = layui.laydate;
+        var layer = layui.layer;
+        var upload = layui.upload;
+        form = layui.form;
+        var loadding_index = '';
+        $('.pass').click(function () {
+            id = $(this).attr('data');
+            url = $(this).attr('data-url')
+            var index = layer.confirm('确认通过？', {
+                btn: ['确认','取消'] //按钮
+            }, function(){
+                layer.close(index)
+                $.post(url, {id:id}, function (response) {
+                    if (!response.code) {
+                        warning(response.msg)
+                    } else {
+                        success(response.msg)
+                        setTimeout(function(){
+                            window.location.href = response.url
+                        }, response.wait * 1000);
+                    }
+                })
+            });
+        });
+        $('.refuse').click(function () {
+            id = $(this).attr('data');
+            url = $(this).attr('data-url');
+            layer.prompt({
+                formType: 2,
+                value: '',
+                title: '请输入拒绝原因',
+                area: ['300px', '200px'] //自定义文本域宽高
+            }, function(value, index, elem){
+                alert(value); //得到value
+                layer.close(index);
+                $.post(url, {id:id,msg:value}, function (response) {
+                    if (!response.code) {
+                        warning(response.msg);
+                    } else {
+                        success(response.msg);
+                        setTimeout(function(){
+                            window.location.href = response.url
+                        }, response.wait * 1000);
+                    }
+                })
+            });
+        });
+
+        exhibition_render();
+        //图片放大
+        $('.form-group img').zoomify();
+        //门店类型二级联动
+        form.on('select(parent_industry_category)', function(data){
+            let pid = data.value;
+            if(pid == ''){
+                $("#industry_category").html("");
+                $("#industry_category").append('<option value="">请选择类型</option>');
+                form.render('select');
+                return ;
+            }
+            $.ajax({
+                type: 'POST',
+                url: '{:url("StoreManage/getIndustryCategoryByPid")}',
+                data: {pid:pid},
+                dataType:  'json',
+                success: function(data){
+                    $("#industry_category").html("");
+                    // $("#industry_category").append('<option value="">请选择类型</option>');
+                    $.each(data, function(key, val) {
+                        let option = $("<option>").val(val.id).text(val.name);
+                        if(val.id == '{$store.industry_category_id}'){
+                            option = option.attr("selected",true);
+                        }
+                        $("#industry_category").append(option);
+                    });
+                    // $("#industry_category").get(0).selectedIndex=1;
+                    form.render('select');
+                }
+            });
+        });
+        //首次触发门店类型事件
+        layui.event.call(this,'form','select(parent_industry_category)',{value:'{$store.industry_category_pid}'});
+        //获取地区数据
+        $.get("__JSON__/district.json",function(data){
+            province = data.result[0];
+            city = data.result[1];
+            district = data.result[2];
+            get_province();
+        });
+        //省份切换事件
+        form.on('select(province)',function (data) {
+            var id = $(data.elem).find("option:selected").attr("data-id");
+            toggle_province($('#province option:selected').data('id'));
+        });
+        //城市切换事件
+        form.on('select(city)',function (data) {
+            var id = $(data.elem).find("option:selected").attr("data-id");
+            var provinceid = $(data.elem).find("option:selected").attr("data-provinceid");
+            toggle_city(id,provinceid);
+        });
+        //获取省份
+        function get_province(){
+            let select_index = 0;
+            for (let x in province) {
+                let selected = '';
+                if(is_first_select && province[x].fullname == select_province){
+                    selected = 'selected';
+                    select_index = x;
+                }
+                $("#province").append('<option ' + selected + ' data-id="' + x + '" value="' + province[x].fullname + '">' + province[x].fullname + '</option>');
+            }
+            toggle_province(select_index);
+        }
+        //切换省份
+        function toggle_province(id) {
+            $("#city").html('');
+            $("#district").html('');
+            let i = province[id].cidx[0];
+            if(!city[i].hasOwnProperty('cidx')){
+                $("#city").append('<option data-id = "-1" data-provinceid="' + i + '"  value="' + province[id].fullname + '">' + province[id].fullname + '</option>');
+                toggle_city("-1",id);
+                return ;
+            }
+            let select_index = i;
+            for(;i<=province[id].cidx[1];i++){
+                let selected = '';
+                if(is_first_select &&  city[i].fullname == select_city){
+                    selected = 'selected';
+                    select_index = i;
+                }
+                $("#city").append('<option ' + selected + ' data-id="' + i + '"  value="' + city[i].fullname + '">' + city[i].fullname + '</option>');
+            }
+            toggle_city(select_index);
+            form.render('select');
+        }
+        //切换市区
+        function toggle_city(id,provinceid) {
+            $("#district").html('');
+            if(id == "-1"){
+                let i = province[provinceid].cidx[0];
+                for(;i<=province[provinceid].cidx[1];i++){
+                    let selected = '';
+                    if(is_first_select &&  city[i].fullname == select_district){
+                        selected = 'selected';
+                    }
+                    $("#district").append('<option ' + selected + ' data-id="' + i + '"  value="' + city[i].fullname + '">' + city[i].fullname + '</option>');
+                }
+            }else{
+                let i = city[id].cidx[0];
+                for(;i<=city[id].cidx[1];i++){
+                    let selected = '';
+                    if(is_first_select &&  district[i].fullname == select_district){
+                        selected = 'selected';
+                    }
+                    $("#district").append('<option ' + selected + ' data-id="' + i + '"  value="' + district[i].fullname + '">' + district[i].fullname + '</option>');
+                }
+            }
+            is_first_select = false;
+            form.render('select');
+        }
+        //重新渲染商家店铺图多图上传
+        function exhibition_render(){
+            $('#exhibition_block .layui-upload-img').zoomify();
+            $('#exhibition_block>div>.layui-icon-close').click(function () {
+                $(this).parent().remove()
+            });
+        }
+        function getObjectURL(file) {
+            var url = null;
+            if(window.createObjectURL != undefined) { // basic
+                url = window.createObjectURL(file);
+            } else if(window.URL != undefined) { // mozilla(firefox)
+                url = window.URL.createObjectURL(file);
+            } else if(window.webkitURL != undefined) { // webkit or chrome
+                url = window.webkitURL.createObjectURL(file);
+            }
+            return url;
+        }
+    });
+</script>
+{/block}
+{block name="submit"}
+{if $store.state == 1}
+    {:passButton(url('StoreExamine/pass' ), $store->id,'通过','')}
+    {:refuseButton(url('StoreExamine/refuse' ), $store->id,'拒绝','')}
+{/if}
+{/block}

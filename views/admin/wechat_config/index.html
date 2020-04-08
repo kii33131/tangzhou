@@ -1,0 +1,184 @@
+{extend name="public:form" /}
+{block name="menu"}小程序设置 / 基本信息{/block}
+{block name='action'}{:url('WechatConfig/index')}{/block}
+{block name="css"}
+<style>
+    .logo_img{
+        width: 100px;
+        height: 100px;
+        border: 1px solid #e2e2e2;
+        cursor: pointer;
+    }
+    .back{
+        display: none;
+    }
+</style>
+{/block}
+{block name="form"}
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">小程序appid</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="appid" required value="{$config.appid}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">小程序appsecret</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="appsecret" required value="{$config.appsecret}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">商户号</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="mch_id" value="{$config.mch_id}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">支付密钥</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="pay_key" value="{$config.pay_key}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">小程序标题</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="wechat_title" required value="{$config.wechat_title}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">平台名称</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="platform_name" required value="{$config.platform_name}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">小程序支付apiclient_cert.pem：</label>
+            <div class="col-sm-8">
+                <textarea class="form-control" name="apiclient_cert" rows="3" placeholder="为保证安全性, 不显示证书内容. 若要修改, 请直接输入"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">小程序支付apiclient_key.pem：</label>
+            <div class="col-sm-8">
+                <textarea class="form-control" name="apiclient_key" rows="3" placeholder="为保证安全性, 不显示证书内容. 若要修改, 请直接输入"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">LOGO</label>
+            <div class="col-sm-8">
+                <img src="{if $config['logo'] != ''}__UPLOADS__/{$config.logo}{else}__IMG__/add.jpg{/if}" class="logo_img">
+                <span>（建议尺寸大小100*100）</span>
+                <input type="file" name="logo" style="display: none;" id="logo_input">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">平台联系电话</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" name="platform_phone" required value="{$config.platform_phone}">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">简介</label>
+            <div class="col-sm-10">
+                    <textarea class="form-control" name="introduce" rows="3">{$config.introduce}</textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">入驻协议</label>
+            <div class="col-sm-10">
+                <script id="entry_agreement" name="entry_agreement" type="text/plain">{$config.entry_agreement|raw}</script>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">抢购券发布协议</label>
+            <div class="col-sm-10">
+                <script id="panic_buying_coupon_release_agreement" name="panic_buying_coupon_release_agreement" type="text/plain">{$config.panic_buying_coupon_release_agreement|raw}</script>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">促销券发布协议</label>
+            <div class="col-sm-10">
+                <script id="promotion_coupon_release_agreement" name="promotion_coupon_release_agreement" type="text/plain">{$config.promotion_coupon_release_agreement|raw}</script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 配置文件 -->
+<script type="text/javascript" src="__PLUGINS__/js/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="__PLUGINS__/js/ueditor/ueditor.all.js"></script>
+<!-- 实例化编辑器 -->
+<script type="text/javascript">
+    var editor_config = {
+        toolbars: [
+            ['fullscreen', 'source', 'undo', 'redo','bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc']
+        ],
+        initialFrameHeight:300
+    };
+    var ue = UE.getEditor('entry_agreement',editor_config);
+    var ue = UE.getEditor('panic_buying_coupon_release_agreement',editor_config);
+    var ue = UE.getEditor('promotion_coupon_release_agreement',editor_config);
+
+    $(".logo_img").click(function (){
+        $('#logo_input').click();
+    });
+
+    $("#logo_input").on("change", function() {
+        var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
+        if(objUrl) {
+            $(".logo_img").attr("src", objUrl); //将图片路径存入src中，显示出图片
+        }
+    });
+
+
+    function getObjectURL(file) {
+        var url = null;
+        if(window.createObjectURL != undefined) { // basic
+            url = window.createObjectURL(file);
+        } else if(window.URL != undefined) { // mozilla(firefox)
+            url = window.URL.createObjectURL(file);
+        } else if(window.webkitURL != undefined) { // webkit or chrome
+            url = window.webkitURL.createObjectURL(file);
+        }
+        return url;
+    }
+</script>
+{/block}

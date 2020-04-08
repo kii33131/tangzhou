@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>代理点后台管理</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="__CSS__/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__CSS__/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__CSS__/animate.css" rel="stylesheet">
+    <link href="__CSS__/style.css?v=4.1.0" rel="stylesheet">
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeIn">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    基本信息
+                                </div>
+                                <div class="ibox-content">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped">
+
+                                            <tr>
+                                                <th>余额</th>
+                                                <td>
+                                                    {$agent['balance']}元
+                                                    <a href="{:url('Balance/cashWithdrawal')}">
+                                                        <button class="btn btn-info btn-xs" type="button">提现
+                                                        </button>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>积分</th>
+                                                <td>
+                                                    {$agent['integral']}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>代理区域</th>
+                                                <td>{$agent['province']} {$agent['city']} {$agent['district']}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>代理级别</th>
+                                                <td>{present name="$agentLevel[$agent['level']]"}{$agentLevel[$agent['level']]}{/present}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>抽水比例</th>
+                                                <td>{$agent['pumping_ratio']}%</td>
+                                            </tr>
+                                            <tr>
+                                                <th>入驻返利</th>
+                                                <td>{$agent['residence_rebate']}%</td>
+                                            </tr>
+                                            <tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 全局js -->
+<script src="__JS__/jquery.min.js?v=2.1.4"></script>
+<script src="__JS__/bootstrap.min.js?v=3.3.6"></script>
+<script src="__PLUGINS__/js/toastr/toastr.min.js"></script>
+<!-- 自定义js -->
+<script src="__JS__/content.js?v=1.0.0"></script>
+
+</body>
+
+</html>

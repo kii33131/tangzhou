@@ -1,0 +1,43 @@
+{extend name="public:base" /}
+{block name="menu"}帮助中心{/block}
+{block name="search"}
+{:createButton(url('create'), '新增')}
+{/block}
+
+{block name="table-head"}
+    <tr>
+        <th>名称</th>
+        <th>内容</th>
+        <th>创建时间</th>
+        <th>创建人</th>
+        <th>操作</th>
+    </tr>
+{/block}
+
+
+
+{block name="table-body"}
+
+{if condition="!$helpcenters->count()"}
+<tr>
+    <td colspan="5" class="text-center">没有数据</td>
+</tr>
+{else/}
+{foreach $helpcenters as $key => $helpcenter}
+<tr>
+    <td>{$helpcenter->name}</td>
+    <td>{$helpcenter->content}</td>
+    <td>{$helpcenter->create_time}</td>
+    <td>{$helpcenter->user_name}</td>
+    <td>
+        {:editButton(url('HelpCenter/edit', ['id' =>$helpcenter->id ]))}
+        {:deleteButton(url('HelpCenter/delete'), $helpcenter->id)}
+    </td>
+
+</tr>
+{/foreach}
+{/if}
+{/block}
+{block name="paginate"}
+{$helpcenters->render()|raw}
+{/block}

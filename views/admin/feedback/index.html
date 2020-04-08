@@ -1,0 +1,38 @@
+{extend name="public:base" /}
+{block name="css"}
+<style>
+    .ibox-title{
+        display:none;
+    }
+</style>
+{/block}
+{block name="menu"}意见反馈{/block}
+{block name="table-head"}
+    <tr>
+        <th>手机号码</th>
+        <th>邮箱</th>
+        <th>QQ号码</th>
+        <th>反馈内容</th>
+        <th>反馈时间</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    {if condition="!$feedbacks->count()"}
+        <tr>
+            <td colspan="7" class="text-center">没有数据</td>
+        </tr>
+    {else/}
+        {foreach $feedbacks as $key => $feedback}
+            <tr>
+                <td>{$feedback->phone}</td>
+                <td>{$feedback->email}</td>
+                <td>{$feedback->qq}</td>
+                <td>{$feedback->content}</td>
+                <td>{$feedback->create_time}</td>
+            </tr>
+        {/foreach}
+    {/if}
+{/block}
+{block name="paginate"}
+    {$feedbacks->render()|raw}
+{/block}

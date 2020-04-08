@@ -1,0 +1,127 @@
+{extend name="public:form" /}
+{block name="menu"}修改卡券信息{/block}
+{block name='action'}{:url('CouponManage/edit')}{/block}
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+{/block}
+{block name="form"}
+<div class="row layui-form">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">卡券名称</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="name" required value="{$coupon.name}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">卡券类型</label>
+            <div class="col-sm-8">
+                <div class="layui-input-inline">
+                    <select name="type" lay-filter="type">
+                        <option value="1" {$coupon.type == 1 ? 'selected' : ''}>抢购券</option>
+                        <option value="2" {$coupon.type == 2 ? 'selected' : ''}>促销券</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 promotion">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">模式选择</label>
+            <div class="col-sm-8">
+                <div class="layui-input-inline">
+                    <input type="radio" name="pattern" value="1" title="一般模式" {$coupon.pattern == 1 ? 'checked' : ''} lay-filter="pattern">
+                    <input type="radio" name="pattern" value="2" title="推广模式" {$coupon.pattern == 2 ? 'checked' : ''} lay-filter="pattern">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">原价价格</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="original_price" required value="{$coupon.original_price}">
+            </div>
+            <label class="control-label">元</label>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">返利佣金</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" name="rebate_commission" required value="{$coupon.rebate_commission}">
+            </div>
+            <label class="control-label">%</label>
+        </div>
+    </div>
+    <div class="promotion">
+        <div class="col-sm-6  promotion_commission">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">推广人佣金</label>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" name="promotion_commission" required value="{$coupon.promotion_commission}">
+                </div>
+                <label class="control-label">%</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">有效时间</label>
+            <div class="col-sm-4">
+                <input type="text" class="layui-input" id="valid_time" name="valid_time" placeholder=" - " value="{$coupon.start_time|date='Y-m-d'} - {$coupon.end_time|date='Y-m-d'}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">使用说明</label>
+            <div class="col-sm-8">
+                <textarea placeholder="请输入内容" name="instructions" class="layui-textarea">{$coupon.instructions}</textarea>
+            </div>
+        </div>
+    </div>
+</div>
+    <input type="hidden" name="id" value="{$coupon.id}">
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script>
+    {if !in_array($coupon['state'],$couponEditStates)}
+        $("input,select,textarea").attr("disabled","disabled");
+    {/if}
+    layui.use(['laydate','form','layer'],function () {
+        var laydate = layui.laydate,
+        form = layui.form;
+        //有效日期范围
+        laydate.render({
+            elem: '#valid_time'
+            ,range: true
+        });
+
+        form.on('select(type)', function(data){
+            if(data.value == 1){
+                $('.promotion').show();
+            }else{
+                $('.promotion').hide();
+            }
+        });
+        form.on('radio(pattern)', function(data){
+            if(data.value == 1){
+                console.log($('.promotion_commission'));
+                $('.promotion_commission').hide();
+            }else{
+                $('.promotion_commission').show();
+            }
+        });
+        layui.event.call(this,'form','select(type)',{value:{$coupon.type}});
+        layui.event.call(this,'form','radio(pattern)',{value:{$coupon.pattern}});
+    });
+</script>
+{/block}
+{block name="submit"}
+{if in_array($coupon['state'],$couponEditStates)}
+    <button class="btn btn-primary" type="submit">保存</button>
+{/if}
+{/block}

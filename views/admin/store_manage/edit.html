@@ -1,0 +1,439 @@
+{extend name="public:form" /}
+{block name="menu"}修改门店信息{/block}
+{block name='action'}{:url('StoreManage/edit')}{/block}
+{block name="css"}
+<link href="__PLUGINS__/js/layui/css/layui.css" rel="stylesheet">
+<link href="__PLUGINS__/js/zoomify/zoomify.min.css" rel="stylesheet">
+<style>
+    .picture{
+        height: 100px;
+        border: 1px solid #e2e2e2;
+        cursor: pointer;
+
+    }
+    .layui-laydate-content>.layui-laydate-list {
+        padding-bottom: 0px;
+        overflow: hidden;
+    }
+    .layui-laydate-content>.layui-laydate-list>li{
+        width:50%
+    }
+
+    .merge-box .scrollbox .merge-list {
+        padding-bottom: 5px;
+    }
+    .btn-default,.btn-default:focus {
+        color: #333;
+        background-color: #fff;
+        border-color: #ccc;
+    }
+    .id_card>div{
+       margin-top: 10px;
+    }
+    #exhibition_block>div{
+        position: relative;
+        display: inline-block;
+        margin: 5px;
+    }
+    #exhibition_block>div>img{
+        height: 100px;
+    }
+    #exhibition_block>div>.layui-icon-close{
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        right: 0;
+        color: #fff;
+        font-weight: 800;
+    }
+    .none{
+        display: none;
+    }
+    .layui-form-select .layui-input{
+        padding-right: 0;
+    }
+</style>
+
+{/block}
+{block name="form"}
+<div class="row layui-form">
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店名称</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="name" required value="{$store.name}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店logo</label>
+            <div class="col-sm-8">
+                <img src="__UPLOADS__/{$store.logo}" class="picture" id="logo_img">
+                <span>（建议尺寸大小100*100）</span>
+                <span><button type="button" class="btn btn-default" id="logo_btn">选择图片</button></span>
+                <input type="file" name="logo" style="display: none;" id="logo_input">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店地址</label>
+            <div class="col-sm-10">
+                <div class="layui-input-inline">
+                    <select id="province" lay-filter="province" name="province"></select>
+                </div>
+                <div class="layui-input-inline">
+                    <select  id="city" lay-filter="city" name="city"></select>
+                </div>
+                <div class="layui-input-inline">
+                    <select id="district" lay-filter="district" name="district"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">详细地址</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="address" required value="{$store.address}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">联系人</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="contacts" required value="{$store.contacts}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">联系电话</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="phone" required value="{$store.phone}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店联系电话</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" name="store_mobile" required value="{$store.store_mobile}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店类型</label>
+            <div class="col-sm-6">
+                <div class="layui-input-inline">
+                    <select name="parent_industry_category" lay-filter="parent_industry_category">
+<!--                        <option value="">请选择类别</option>-->
+                        {foreach $parentIndustryCategory as $key=>$category }
+                            <option {$category.id == $store.industry_category_pid ? 'selected' : ''} value="{$category.id}">{$category.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="layui-input-inline" >
+                    <select name="industry_category_id" lay-filter="industry_category" lay-verify="required"  id="industry_category">
+<!--                        <option value="">请选择类型</option>-->
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">营业执照</label>
+            <div class="col-sm-6">
+                <img src="__UPLOADS__/{$store.business_license}" id="business_license_img" class="picture">
+                <span><button type="button" class="btn btn-default" id="business_license_btn">选择图片</button></span>
+                <input type="file" name="business_license" style="display: none;" id="business_license_input">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">身份证</label>
+            <div class="col-sm-6 id_card">
+                <div class="col-sm-12">
+                    <img src="__UPLOADS__/{$store.id_card_positive}" id="id_card_positive_img" class="picture">
+                    <span><button type="button" class="btn btn-default" id="id_card_positive_btn">选择图片</button></span>
+                    <input type="file" name="id_card_positive" style="display: none;" id="id_card_positive_input">
+                </div>
+                <div class="col-sm-12">
+                    <img src="__UPLOADS__/{$store.id_card_back}" class="picture" id="id_card_back_img">
+                    <span><button type="button" class="btn btn-default" id="id_card_back_btn">选择图片</button></span>
+                    <input type="file" name="id_card_back" style="display: none;" id="id_card_back_input">
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">商家店铺图</label>
+            <div class="col-sm-10">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn" id="exhibition_btn">选择图片</button>
+                    <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+<!--                        预览图：-->
+                        <div class="layui-upload-list" id="exhibition_block">
+                            {foreach $store.exhibition as $key=>$vo }
+                                <div>
+                                    <img src="__UPLOADS__/{$vo}" class="layui-upload-img">
+                                    <i class="layui-icon layui-icon-close"></i>
+                                    <input type="text" name="exhibition[]" class="none" value="{$vo}">
+                                </div>
+                            {/foreach}
+                        </div>
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">营业时间</label>
+            <div class="col-sm-6">
+                <input type="text" class="layui-input" id="business_hours" name="business_hours" placeholder=" - " value="{$store.start_hours} - {$store.end_hours}">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">门店简介</label>
+            <div class="col-sm-6">
+                <textarea class="form-control" name="introduce" rows="5">{$store.introduce}</textarea>
+            </div>
+        </div>
+    </div>
+</div>
+    <input type="hidden" name="id" value="{$store.id}">
+<script type="text/javascript" src="__PLUGINS__/js/layui/layui.js"></script>
+<script type="text/javascript" src="__PLUGINS__/js/zoomify/zoomify.min.js"></script>
+<script>
+    var form,province,city,district;
+    var select_province = '{$store.province}';
+    var select_city = '{$store.city}';
+    var select_district = '{$store.district}';
+    var is_first_select = true;
+    layui.use(['laydate','form','layer','upload'],function () {
+        var laydate = layui.laydate;
+        var layer = layui.layer;
+        var upload = layui.upload;
+        form = layui.form;
+        var loadding_index = '';
+        //商家店铺图上传
+        upload.render({
+            elem: '#exhibition_btn'
+            ,url: '{:url("StoreManage/upload")}'
+            ,before: function(obj){
+                if($('#exhibition_block>div').length >= 6){
+                    layer.msg('店铺图最多上传6张');
+                    return false;
+                }
+                loadding_index = layer.load();
+            }
+            ,done: function(res){
+                //上传完毕
+                layer.close(loadding_index);
+                if(res.errorCode== 0){
+                    let innerhtml = '<div>' +
+                        '<img src="__UPLOADS__/' + res.data.url + '" class="layui-upload-img">' +
+                        '<i class="layui-icon layui-icon-close"></i>' +
+                        '<input type="text" name="exhibition[]" class="none" value="' + res.data.url + '">' +
+                        '</div>';
+                    $('#exhibition_block').append(innerhtml)
+                }else{
+                    layer.msg(res.msg);
+                }
+                exhibition_render();
+            }
+        });
+        //营业时间渲染
+        laydate.render({
+            elem: '#business_hours'
+            ,type: 'time'
+            ,range: true
+            ,format: 'HH:mm'
+            ,ready: function () {
+                $($(".laydate-time-list li ol")[2]).find("li").remove();  //清空秒
+
+            }
+        });
+        exhibition_render();
+        //图片放大
+        $('.form-group img').zoomify();
+        //门店类型二级联动
+        form.on('select(parent_industry_category)', function(data){
+            let pid = data.value;
+            if(pid == ''){
+                $("#industry_category").html("");
+                $("#industry_category").append('<option value="">请选择类型</option>');
+                form.render('select');
+                return ;
+            }
+            $.ajax({
+                type: 'POST',
+                url: '{:url("StoreManage/getIndustryCategoryByPid")}',
+                data: {pid:pid},
+                dataType:  'json',
+                success: function(data){
+                    $("#industry_category").html("");
+                    // $("#industry_category").append('<option value="">请选择类型</option>');
+                    $.each(data, function(key, val) {
+                        let option = $("<option>").val(val.id).text(val.name);
+                        if(val.id == {$store.industry_category_id}){
+                            option = option.attr("selected",true);
+                        }
+                        $("#industry_category").append(option);
+                    });
+                    // $("#industry_category").get(0).selectedIndex=1;
+                    form.render('select');
+                }
+            });
+        });
+        //首次触发门店类型事件
+        layui.event.call(this,'form','select(parent_industry_category)',{value:'{$store.industry_category_pid != '' ? $store.industry_category_pid : $parentIndustryCategory[0]["id"]}' });
+        //LOGO选择
+        $('#logo_btn').click(function () {
+            $('#logo_input').click();
+        });
+        $("#logo_input").on("change", function() {
+            var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
+            if(objUrl) {
+                $("#logo_img").attr("src", objUrl); //将图片路径存入src中，显示出图片
+            }
+        });
+        //营业执照选择
+        $('#business_license_btn').click(function () {
+            $('#business_license_input').click();
+        });
+        $("#business_license_input").on("change", function() {
+            var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
+            if(objUrl) {
+                $("#business_license_img").attr("src", objUrl); //将图片路径存入src中，显示出图片
+            }
+        });
+        //身份证正面选择
+        $('#id_card_positive_btn').click(function () {
+            $('#id_card_positive_input').click();
+        });
+        $("#id_card_positive_input").on("change", function() {
+            var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
+            if(objUrl) {
+                $("#id_card_positive_img").attr("src", objUrl); //将图片路径存入src中，显示出图片
+            }
+        });
+        //身份证反面选择
+        $('#id_card_back_btn').click(function () {
+            $('#id_card_back_input').click();
+        });
+        $("#id_card_back_input").on("change", function() {
+            var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
+            if(objUrl) {
+                $("#id_card_back_img").attr("src", objUrl); //将图片路径存入src中，显示出图片
+            }
+        });
+        //获取地区数据
+        $.get("__JSON__/district.json",function(data){
+            province = data.result[0];
+            city = data.result[1];
+            district = data.result[2];
+            get_province();
+        });
+        //省份切换事件
+        form.on('select(province)',function (data) {
+            var id = $(data.elem).find("option:selected").attr("data-id");
+            toggle_province($('#province option:selected').data('id'));
+        });
+        //城市切换事件
+        form.on('select(city)',function (data) {
+            var id = $(data.elem).find("option:selected").attr("data-id");
+            var provinceid = $(data.elem).find("option:selected").attr("data-provinceid");
+            toggle_city(id,provinceid);
+        });
+        //获取省份
+        function get_province(){
+            let select_index = 0;
+            for (let x in province) {
+                let selected = '';
+                if(is_first_select && province[x].fullname == select_province){
+                    selected = 'selected';
+                    select_index = x;
+                }
+                $("#province").append('<option ' + selected + ' data-id="' + x + '" value="' + province[x].fullname + '">' + province[x].fullname + '</option>');
+            }
+            toggle_province(select_index);
+        }
+        //切换省份
+        function toggle_province(id) {
+            $("#city").html('');
+            $("#district").html('');
+            let i = province[id].cidx[0];
+            if(!city[i].hasOwnProperty('cidx')){
+                $("#city").append('<option data-id = "-1" data-provinceid="' + i + '"  value="' + province[id].fullname + '">' + province[id].fullname + '</option>');
+                toggle_city("-1",id);
+                return ;
+            }
+            let select_index = i;
+            for(;i<=province[id].cidx[1];i++){
+                let selected = '';
+                if(is_first_select &&  city[i].fullname == select_city){
+                    selected = 'selected';
+                    select_index = i;
+                }
+                $("#city").append('<option ' + selected + ' data-id="' + i + '"  value="' + city[i].fullname + '">' + city[i].fullname + '</option>');
+            }
+            toggle_city(select_index);
+            form.render('select');
+        }
+        //切换市区
+        function toggle_city(id,provinceid) {
+            $("#district").html('');
+            if(id == "-1"){
+                let i = province[provinceid].cidx[0];
+                for(;i<=province[provinceid].cidx[1];i++){
+                    let selected = '';
+                    if(is_first_select &&  city[i].fullname == select_district){
+                        selected = 'selected';
+                    }
+                    $("#district").append('<option ' + selected + ' data-id="' + i + '"  value="' + city[i].fullname + '">' + city[i].fullname + '</option>');
+                }
+            }else{
+                let i = city[id].cidx[0];
+                for(;i<=city[id].cidx[1];i++){
+                    let selected = '';
+                    if(is_first_select &&  district[i].fullname == select_district){
+                        selected = 'selected';
+                    }
+                    $("#district").append('<option ' + selected + ' data-id="' + i + '"  value="' + district[i].fullname + '">' + district[i].fullname + '</option>');
+                }
+            }
+            is_first_select = false;
+            form.render('select');
+        }
+        //重新渲染商家店铺图多图上传
+        function exhibition_render(){
+            $('#exhibition_block .layui-upload-img').zoomify();
+            $('#exhibition_block>div>.layui-icon-close').click(function () {
+                $(this).parent().remove()
+            });
+        }
+        function getObjectURL(file) {
+            var url = null;
+            if(window.createObjectURL != undefined) { // basic
+                url = window.createObjectURL(file);
+            } else if(window.URL != undefined) { // mozilla(firefox)
+                url = window.URL.createObjectURL(file);
+            } else if(window.webkitURL != undefined) { // webkit or chrome
+                url = window.webkitURL.createObjectURL(file);
+            }
+            return url;
+        }
+    });
+</script>
+{/block}

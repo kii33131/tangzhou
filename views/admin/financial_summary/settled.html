@@ -1,0 +1,17 @@
+{extend name="financial_summary:base" /}
+{block name="table-head"}
+    <tr>
+        <th>入驻门店数量</th>
+        <th>平台收入</th>
+        <th>代理点收入</th>
+        <th>推荐人收入（未进行地区筛选）</th>
+    </tr>
+{/block}
+{block name="table-body"}
+    <tr>
+        <td>{$data['settled_number']}</td>
+        <td>{$data['platform_revenue']}元</td>
+        <td>{$data['agent_revenue']}元</td>
+        <td>{$data['recommender_income']}元</td>
+    </tr>
+{/block}

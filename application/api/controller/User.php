@@ -34,7 +34,8 @@ class User extends Base
         $data = $validate->getDataByRule(input('post.'));
         $result=ImgModel::where(['code'=>$data['code']])->find();
         if(!$result){
-            error('验证码错误或图片已过期',400);
+           // error('验证码错误或图片已过期',400);
+            success(['code'=>400,'msg'=>'验证码错误或图片已过期']);
         }
         success($result);
     }

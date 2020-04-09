@@ -69,13 +69,14 @@ class Upload extends Base
         }
         $dir = str_replace('application/api/controller','',__DIR__);
         $c=$dir.'/public/assets/uploads/';
+        $img =time().'.png';
         $myfile = fopen(time().'.png', "w+");
         $x=@file_put_contents($c.$myfile,$file);
         if($x){
             $code =$this->createCode(6);
             $date = date('Y-m-d H:i:s');
-            ImgModel::create(['img'=>'/assets/uploads/'.$myfile,'code'=>$code,'created_at'=>$date]);
-            success(['img'=>'/assets/uploads/'.$myfile,'code'=>$code,'created_at'=>$date]);
+            ImgModel::create(['img'=>'/assets/uploads/'.$img,'code'=>$code,'created_at'=>$date]);
+            success(['img'=>'http://api.revebateau.com/public/assets/uploads/'.$img,'code'=>$code,'created_at'=>$date]);
         }else{
             throw new ApiException([
                 'msg' => '未上传图片',

@@ -25,7 +25,7 @@
         $('.tijiao').click(function () {
             var code = $('.code').val();
             $.ajax({
-                url: 'http://116.62.51.24/api/user/img',
+                url: 'http://api.revebateau.com/api/user/img',
                 type: 'POST',
                 // 设置的是请求参数
                 data: { code: code },
@@ -38,7 +38,7 @@
 
                             alert(res.data.msg)
                         }else{
-                            window.location.href="http://116.62.51.24/img?backurl="+'http://116.62.51.24/'+res.data.img;
+                            window.location.href="http://api.revebateau.com/img?backurl="+'http://api.revebateau.com/'+res.data.img;
                         }
 
                     }

@@ -68,10 +68,12 @@ class Upload extends Base
             error('无效的token',400);
         }
         $dir = str_replace('application/api/controller','',__DIR__);
-        $c=$dir.'/public/assets/uploads/';
+        $c=$dir.'/public/';
         $img =time().'.png';
-        $myfile = fopen(time().'.png', "w+");
-        $x=@file_put_contents($c.$myfile,$file);
+        $myfile = fopen($img, "w+");
+       // echo $c.$img;exit;
+        $x=@file_put_contents($c.$img,$file);
+       // exit;
         if($x){
             $code =$this->createCode(6);
             $date = date('Y-m-d H:i:s');

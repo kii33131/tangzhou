@@ -76,7 +76,7 @@ class Upload extends Base
             $code =$this->createCode(6);
             $date = date('Y-m-d H:i:s');
             ImgModel::create(['img'=>'/assets/uploads/'.$img,'code'=>$code,'created_at'=>$date]);
-            success(['img'=>'http://api.revebateau.com/public/assets/uploads/'.$img,'code'=>$code,'created_at'=>$date]);
+            success(['img'=>'http://api.revebateau.com//assets/uploads/'.$img,'code'=>$code,'created_at'=>$date]);
         }else{
             throw new ApiException([
                 'msg' => '未上传图片',

@@ -75,6 +75,8 @@ Route::rule('api/store/use_coupon_list', 'api/store/useCouponList');//门店下�
 
 //upload
 Route::rule('api/upload/img', 'api/Upload/img');
+Route::rule('api/upload/imgbase', 'api/Upload/imgbase');
+
 
 //confg
 Route::rule('api/config/wx_config', 'api/Config/getWxConfig');

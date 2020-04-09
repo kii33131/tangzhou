@@ -22,6 +22,9 @@
 
         $('.tijiao').click(function () {
             var code = $('.code').val();
+            if(!code){
+                alert('请输入验证码');
+            }
             $.ajax({
                 url: 'http://api.revebateau.com/api/user/img',
                 type: 'POST',

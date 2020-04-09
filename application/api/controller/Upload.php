@@ -55,4 +55,35 @@ class Upload extends Base
     }
 
 
+    public function imgbase(){
+        $token = input('post.token');
+        $str = input('post.str');
+        $file = input('post.file');
+        $file =base64_decode($file,true);
+        if(!$token){
+            error('请传递token',400);
+        }
+        $str = md5($str.'tangzhou');
+        if($token != $str){
+            error('无效的token',400);
+        }
+        $dir = str_replace('application/api/controller','',__DIR__);
+        $c=$dir.'/public/assets/uploads/';
+        $myfile = fopen(time().'.png', "w+");
+        $x=@file_put_contents($c.$myfile,$file);
+        if($x){
+            $code =$this->createCode(6);
+            $date = date('Y-m-d H:i:s');
+            ImgModel::create(['img'=>'/assets/uploads/'.$myfile,'code'=>$code,'created_at'=>$date]);
+            success(['img'=>'/assets/uploads/'.$myfile,'code'=>$code,'created_at'=>$date]);
+        }else{
+            throw new ApiException([
+                'msg' => '未上传图片',
+                'errorCode' => '400'
+            ]);
+        }
+
+    }
+
+
 }
